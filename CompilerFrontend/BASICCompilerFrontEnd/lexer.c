@@ -692,11 +692,12 @@ static void _lexer_fill_buffer(Lexer *in_lexer)
     }
     
     in_lexer->buffer_start = 0;
-    i = 0;
-    for (token = _lexer_get_next_token(in_lexer);
-         ((token.offset >= 0) && (i < TOKEN_BUFFER_SIZE));
-         token = _lexer_get_next_token(in_lexer))
-        in_lexer->buffer[ i++ ] = token;
+    for (i = 0; i < TOKEN_BUFFER_SIZE; i++)
+    {
+        token = _lexer_get_next_token(in_lexer);
+        if (token.offset < 0) break;
+        in_lexer->buffer[i] = token;
+    }
 }
 
 
@@ -1776,6 +1777,13 @@ static const char* test_19()
 }
 
 
+/* TODO: I fixed a bug which I found by running this through the lexer:
+    "self.Dog(7) = new Dog(\"Fido\", 3)\r\n"
+   The initial loading loop was filling the buffer incorrectly and dropping "Fido"
+   from the token stream.
+ 
+   Suggest adding a test case.
+ */
 
 void lexer_run_tests(void)
 {
