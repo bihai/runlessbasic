@@ -194,19 +194,19 @@ static const char* _ast_node_desc(AstNode *in_node, Boolean in_end, int in_level
             offset += sprintf(buffer + offset, "string:\"%s\">\n", in_node->value.string);
             return buffer;
         case AST_INTEGER:
-            offset += sprintf(buffer + offset, "integer: %ld>\n", in_node->value.integer);
+            offset += sprintf(buffer + offset, "integer:%ld>\n", in_node->value.integer);
             return buffer;
         case AST_REAL:
-            offset += sprintf(buffer + offset, "real: %fd>\n", in_node->value.real);
+            offset += sprintf(buffer + offset, "real:%fd>\n", in_node->value.real);
             return buffer;
         case AST_OPERATOR:
-            offset += sprintf(buffer + offset, "operator: %s>\n", in_node->value.string);
+            offset += sprintf(buffer + offset, "operator:%s>\n", in_node->value.string);
             return buffer;
         case AST_COLOUR:
-            offset += sprintf(buffer + offset, "colour: %ld>\n", in_node->value.integer);
+            offset += sprintf(buffer + offset, "colour:%ld>\n", in_node->value.integer);
             return buffer;
         case AST_BOOLEAN:
-            offset += sprintf(buffer + offset, "boolean: %s>\n", ((in_node->value.integer)?"true":"false"));
+            offset += sprintf(buffer + offset, "boolean:%s>\n", ((in_node->value.integer)?"true":"false"));
             return buffer;
         default:
             if (!in_end) printf(buffer + offset, "unknown>\n");
