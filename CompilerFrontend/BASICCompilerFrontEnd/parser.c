@@ -526,6 +526,9 @@ Parser* parser_create(void)
 #ifdef DEBUG
 
 
+
+
+
 static const char* _test_1()
 {
     Parser *parser;
@@ -538,72 +541,80 @@ static const char* _test_1()
     parser_parse(parser,
                  "Beep\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    /* might be useful to export the thing as a string, which can do by writing a custom
+     walker function... ahhhh...  and compare that to a string of what it's supposed to be */
+    
+    
+    ast_walk(parser->ast, ast_debug_walker, NULL);
+    
+    
+    
+    
     
     parser_parse(parser,
                  "Beep(3)\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "System.Beep\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
     
     parser_parse(parser,
                  "System.Beep()\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "System.Beep(3)\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "System.UI.Beep\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "System.Process(1).Activate\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "System.Process(1).Activate(System.Process.Behind, System.Process.Now)\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "Console.WriteLine \"Hello World!\"\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "Console.WriteLine(\"Hello World!\")\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "self.DogsAge = 1 * inX + 2\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "self.Dog(7) = new Dog(\"Fido\", 3)\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "self.Dog(3) = inAnimals(16).getDog(14)"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
 
     parser_parse(parser,
                  "self.Title = inMofset.getName() + \" \" + inBoggle.getSex()"
                  );
-    ast_walk(parser->ast, ast_debug_walker);
+    ast_walk(parser->ast, ast_debug_walker, NULL);
     
     
     return NULL;

@@ -97,10 +97,10 @@ void ast_append(AstNode *in_parent, AstNode *in_child)
 }
 
 
-static Boolean _ast_walk_int(AstNode *in_node, Boolean (*in_walker)(AstNode*, Boolean, int), int in_level)
+static Boolean _ast_walk_int(AstNode *in_node, Boolean (*in_walker)(AstNode*, Boolean, int, void*), int in_level, void *io_user)
 {
     int i;
-    if (in_walker(in_node, False, in_level)) return True;
+    if (in_walker(in_node, False, in_level, io_user)) return True;
     switch (in_node->type)
     {
         case AST_LIST:
@@ -109,19 +109,19 @@ static Boolean _ast_walk_int(AstNode *in_node, Boolean (*in_walker)(AstNode*, Bo
         case AST_EXPRESSION:
             for (i = 0; i < in_node->value.list.count; i++)
             {
-                if (_ast_walk_int(in_node->value.list.nodes[i], in_walker, in_level+1)) return True;
+                if (_ast_walk_int(in_node->value.list.nodes[i], in_walker, in_level+1, io_user)) return True;
             }
             break;
         default: break;
     }
-    if (in_walker(in_node, True, in_level)) return True;
+    if (in_walker(in_node, True, in_level, io_user)) return True;
     return False;
 }
 
 
-void ast_walk(AstNode *in_tree, Boolean (*in_walker)(AstNode*, Boolean, int))
+void ast_walk(AstNode *in_tree, Boolean (*in_walker)(AstNode*, Boolean, int, void*), void *io_user)
 {
-    _ast_walk_int(in_tree, in_walker, 0);
+    _ast_walk_int(in_tree, in_walker, 0, io_user);
 }
 
 
@@ -148,7 +148,7 @@ static const char* _ast_padding(int in_amount)
 }
 
 
-Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level)
+Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *io_user)
 {
     if (in_end)
     {
