@@ -38,6 +38,7 @@ static void _error(Parser *in_parser, Token in_token, char *in_message)
 
 static AstNode* _parse_path(Parser *in_parser);
 static AstNode* _parse_expression(Parser *in_parser);
+static AstNode* _parse_list(Parser *in_parser, AstNode*(*in_of)(Parser*), Boolean no_parens);
 
 
 static AstNode* _parse_operand(Parser *in_parser)
@@ -178,10 +179,17 @@ static AstNode* _parse_expression(Parser *in_parser)
         lexer_get(in_parser->lexer);
         ast_append(expr, ast_create_operator("new"));
         
-        /* expect identifier, optional argument list
-         followed by end of expression */
+        /* expect identifier */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_IDENTIFIER)
+            SYNTAX("Expected class name");
+        ast_append(expr, ast_create_string(token.text));
         
-        /* TODO: new operator parsing */
+        /* optional argument list */
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_PAREN_LEFT)
+            ast_append(expr, _parse_list(in_parser, _parse_expression, False));
+        
         return expr;
     }
     
@@ -328,10 +336,7 @@ static AstNode* _parse_path(Parser *in_parser)
         /* expecting: ( OR . */
         token = lexer_peek(in_parser->lexer, 0);
         if (token.type == TOKEN_DOT)
-        {
-            ast_append(path, ast_create(AST_LIST));
             lexer_get(in_parser->lexer);
-        }
         else if (token.type == TOKEN_PAREN_LEFT)
         {
             /* parse (...) */
@@ -529,9 +534,77 @@ static const char* _test_1()
     CHECK(parser);
     
     parser->init = &_parse_statement;
-    parser_parse(parser, "Console.WriteLine \"Chicken nuggets\"\r\n");
     
+    parser_parse(parser,
+                 "Beep\r\n"
+                 );
     ast_walk(parser->ast, ast_debug_walker);
+    
+    parser_parse(parser,
+                 "Beep(3)\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "System.Beep\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+    
+    parser_parse(parser,
+                 "System.Beep()\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "System.Beep(3)\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "System.UI.Beep\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "System.Process(1).Activate\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "System.Process(1).Activate(System.Process.Behind, System.Process.Now)\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "Console.WriteLine \"Hello World!\"\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "Console.WriteLine(\"Hello World!\")\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "self.DogsAge = 1 * inX + 2\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "self.Dog(7) = new Dog(\"Fido\", 3)\r\n"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "self.Dog(3) = inAnimals(16).getDog(14)"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+
+    parser_parse(parser,
+                 "self.Title = inMofset.getName() + \" \" + inBoggle.getSex()"
+                 );
+    ast_walk(parser->ast, ast_debug_walker);
+    
     
     return NULL;
 }

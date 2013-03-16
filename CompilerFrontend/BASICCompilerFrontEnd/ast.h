@@ -27,6 +27,30 @@ typedef enum {
     
 } AstNodeType;
 
+/*
+ AST_STATEMENT:
+ 
+    Contains only: <path> [<expression>]
+ 
+    If it's just a <path> - it must be executable and not return a value.
+    If it includes an <expression>, it should be assigned to the writable property given by <path>.
+    (ie. the expression must return a value and the path must be a property or variable.
+ 
+ 
+ AST_PATH:
+ 
+    Takes the form: <string> [<list>] ...
+    <string> is the name of the variable, constant, namespace, class, property, target, function or method.
+    <list> is an optional list of indicies or arguments to index an array or pass to a function/method.
+ 
+ AST_EXPRESSION:
+ 
+    Takes the form: <unary-operator> <operand1> | <operand1> [<binary-operator> <operand2> ...]
+    <unary-operator> will be either: new or not
+    operators are just like strings.
+    <operandN> may be another expression, a path or a literal
+ */
+
 
 struct AstNode;
 typedef struct AstNode AstNode;
