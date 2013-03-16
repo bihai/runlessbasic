@@ -92,6 +92,9 @@ Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *i
  upon return it will contain the text representation of the AST */
 Boolean ast_string_walker(AstNode *in_node, Boolean in_end, int in_level, void *io_user);
 
+void ast_dispose(AstNode *in_tree);
+
+
 
 
 #endif

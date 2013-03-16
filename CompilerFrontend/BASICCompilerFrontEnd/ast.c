@@ -245,5 +245,30 @@ Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *i
 }
 
 
+void ast_dispose(AstNode *in_tree)
+{
+    int i;
+    if (!in_tree) return;
+    switch (in_tree->type)
+    {
+        case AST_EXPRESSION:
+        case AST_LIST:
+        case AST_PATH:
+        case AST_STATEMENT:
+            for (i = 0; i < in_tree->value.list.count; i++)
+                ast_dispose(in_tree->value.list.nodes[i]);
+            break;
+        case AST_OPERATOR:
+        case AST_STRING:
+            if (in_tree->value.string)
+                safe_free(in_tree->value.string);
+            break;
+        default:
+            break;
+    }
+    safe_free(in_tree);
+}
+
+
 
 
