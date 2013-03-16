@@ -100,6 +100,7 @@ void ast_append(AstNode *in_parent, AstNode *in_child)
 static Boolean _ast_walk_int(AstNode *in_node, AstWalker in_walker, int in_level, void *io_user)
 {
     int i;
+    if (!in_node) return False;
     if (in_walker(in_node, False, in_level, io_user)) return True;
     switch (in_node->type)
     {
