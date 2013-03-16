@@ -82,10 +82,16 @@ AstNode* ast_create_colour(long in_colour);
 AstNode* ast_create_real(double in_real);
 void ast_append(AstNode *in_parent, AstNode *in_child);
 
-void ast_walk(AstNode *in_tree, Boolean (*in_walker)(AstNode *in_node, Boolean in_end, int in_level, void *io_user), void *io_user);
+typedef Boolean (*AstWalker) (AstNode *in_node, Boolean in_end, int in_level, void *io_user);
+
+void ast_walk(AstNode *in_tree, AstWalker in_walker, void *io_user);
 
 Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *io_user);
+
+/* io_user should be a char** and initalized to NULL before the call to ast_walk();
+ upon return it will contain the text representation of the AST */
 Boolean ast_string_walker(AstNode *in_node, Boolean in_end, int in_level, void *io_user);
+
 
 
 #endif

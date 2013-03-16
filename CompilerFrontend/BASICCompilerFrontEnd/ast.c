@@ -97,7 +97,7 @@ void ast_append(AstNode *in_parent, AstNode *in_child)
 }
 
 
-static Boolean _ast_walk_int(AstNode *in_node, Boolean (*in_walker)(AstNode*, Boolean, int, void*), int in_level, void *io_user)
+static Boolean _ast_walk_int(AstNode *in_node, AstWalker in_walker, int in_level, void *io_user)
 {
     int i;
     if (in_walker(in_node, False, in_level, io_user)) return True;
@@ -119,7 +119,7 @@ static Boolean _ast_walk_int(AstNode *in_node, Boolean (*in_walker)(AstNode*, Bo
 }
 
 
-void ast_walk(AstNode *in_tree, Boolean (*in_walker)(AstNode*, Boolean, int, void*), void *io_user)
+void ast_walk(AstNode *in_tree, AstWalker in_walker, void *io_user)
 {
     _ast_walk_int(in_tree, in_walker, 0, io_user);
 }
@@ -148,8 +148,13 @@ static const char* _ast_padding(int in_amount)
 }
 
 
-Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *io_user)
+static const char* _ast_node_desc(AstNode *in_node, Boolean in_end, int in_level)
 {
+    static char buffer[2048];
+    long offset;
+    
+    buffer[0] = 0;
+    
     if (in_end)
     {
         switch (in_node->type)
@@ -158,55 +163,83 @@ Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *i
             case AST_PATH:
             case AST_LIST:
             case AST_EXPRESSION:
-                printf("%s}\n", _ast_padding(in_level * 2));
+                sprintf(buffer, "%s}\n", _ast_padding(in_level * 2));
                 break;
             default:
                 break;
         }
-        return False;
+        return buffer;
     }
-    printf("%s<", _ast_padding(in_level * 2));
+    
+    offset = sprintf(buffer, "%s<", _ast_padding(in_level * 2));
     switch (in_node->type)
     {
         case AST_STATEMENT:
-            printf("statement");
+            offset += sprintf(buffer + offset, "statement");
             break;
         case AST_PATH:
-            printf("path");
+            offset += sprintf(buffer + offset, "path");
             break;
         case AST_LIST:
-            printf("list");
+            offset += sprintf(buffer + offset, "list");
             break;
         case AST_EXPRESSION:
-            printf("expression");
+            offset += sprintf(buffer + offset, "expression");
             break;
             
         case AST_NULL:
-            printf("null>\n");
-            return False;
+            offset += sprintf(buffer + offset, "null>\n");
+            return buffer;
         case AST_STRING:
-            printf("string:\"%s\">\n", in_node->value.string);
-            return False;
+            offset += sprintf(buffer + offset, "string:\"%s\">\n", in_node->value.string);
+            return buffer;
         case AST_INTEGER:
-            printf("integer: %ld>\n", in_node->value.integer);
-            return False;
+            offset += sprintf(buffer + offset, "integer: %ld>\n", in_node->value.integer);
+            return buffer;
         case AST_REAL:
-            printf("real: %fd>\n", in_node->value.real);
-            return False;
+            offset += sprintf(buffer + offset, "real: %fd>\n", in_node->value.real);
+            return buffer;
         case AST_OPERATOR:
-            printf("operator: %s>\n", in_node->value.string);
-            return False;
+            offset += sprintf(buffer + offset, "operator: %s>\n", in_node->value.string);
+            return buffer;
         case AST_COLOUR:
-            printf("colour: %ld>\n", in_node->value.integer);
-            return False;
+            offset += sprintf(buffer + offset, "colour: %ld>\n", in_node->value.integer);
+            return buffer;
         case AST_BOOLEAN:
-            printf("boolean: %s>\n", ((in_node->value.integer)?"true":"false"));
-            return False;
+            offset += sprintf(buffer + offset, "boolean: %s>\n", ((in_node->value.integer)?"true":"false"));
+            return buffer;
         default:
-            if (!in_end) printf("unknown>\n");
-            return False;
+            if (!in_end) printf(buffer + offset, "unknown>\n");
+            return buffer;
     }
-    printf("> {\n");
+    offset += sprintf(buffer + offset, "> {\n");
+    
+    return buffer;
+}
+
+
+Boolean ast_string_walker(AstNode *in_node, Boolean in_end, int in_level, void *io_user)
+{
+    const char *text;
+    long text_length, string_length;
+    
+    text = _ast_node_desc(in_node, in_end, in_level);
+    text_length = strlen(text);
+    
+    if (! (*(char**)io_user)) string_length = 0;
+    else string_length = strlen((const char *)*(char**)io_user);
+    *(char**)io_user = safe_realloc(*(char**)io_user, text_length + string_length + 1);
+    strcpy(*(char**)io_user + string_length, text);
+    
+    return False;
+}
+
+
+Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *io_user)
+{
+    const char *text;
+    text = _ast_node_desc(in_node, in_end, in_level);
+    printf("%s", text);
     return False;
 }
 
