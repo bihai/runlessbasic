@@ -532,6 +532,7 @@ Parser* parser_create(void)
 static const char* _test_1()
 {
     Parser *parser;
+    char *result;
     
     parser = parser_create();
     CHECK(parser);
@@ -541,81 +542,297 @@ static const char* _test_1()
     parser_parse(parser,
                  "Beep\r\n"
                  );
-    /* might be useful to export the thing as a string, which can do by writing a custom
-     walker function... ahhhh...  and compare that to a string of what it's supposed to be */
-    
-    
-    ast_walk(parser->ast, ast_debug_walker, NULL);
-    
-    
-    
-    
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"Beep\">\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
     
     parser_parse(parser,
                  "Beep(3)\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"Beep\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <integer:3>\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
 
     parser_parse(parser,
                  "System.Beep\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
-    
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"System\">\n"
+                 "    <string:\"Beep\">\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
+        
     parser_parse(parser,
                  "System.Beep()\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"System\">\n"
+                 "    <string:\"Beep\">\n"
+                 "    <list> {\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
 
     parser_parse(parser,
                  "System.Beep(3)\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
-
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"System\">\n"
+                 "    <string:\"Beep\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <integer:3>\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
+    
     parser_parse(parser,
                  "System.UI.Beep\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
-
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"System\">\n"
+                 "    <string:\"UI\">\n"
+                 "    <string:\"Beep\">\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
+    
     parser_parse(parser,
                  "System.Process(1).Activate\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
-
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"System\">\n"
+                 "    <string:\"Process\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <integer:1>\n"
+                 "      }\n"
+                 "    }\n"
+                 "    <string:\"Activate\">\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
+    
     parser_parse(parser,
                  "System.Process(1).Activate(System.Process.Behind, System.Process.Now)\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
-
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"System\">\n"
+                 "    <string:\"Process\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <integer:1>\n"
+                 "      }\n"
+                 "    }\n"
+                 "    <string:\"Activate\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <path> {\n"
+                 "          <string:\"System\">\n"
+                 "          <string:\"Process\">\n"
+                 "          <string:\"Behind\">\n"
+                 "        }\n"
+                 "      }\n"
+                 "      <expression> {\n"
+                 "        <path> {\n"
+                 "          <string:\"System\">\n"
+                 "          <string:\"Process\">\n"
+                 "          <string:\"Now\">\n"
+                 "        }\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
+    
     parser_parse(parser,
                  "Console.WriteLine \"Hello World!\"\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"Console\">\n"
+                 "    <string:\"WriteLine\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <string:\"Hello World!\">\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
 
     parser_parse(parser,
                  "Console.WriteLine(\"Hello World!\")\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"Console\">\n"
+                 "    <string:\"WriteLine\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <string:\"Hello World!\">\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
 
     parser_parse(parser,
                  "self.DogsAge = 1 * inX + 2\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
-
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"self\">\n"
+                 "    <string:\"DogsAge\">\n"
+                 "  }\n"
+                 "  <expression> {\n"
+                 "    <integer:1>\n"
+                 "    <operator:multiply>\n"
+                 "    <path> {\n"
+                 "      <string:\"inX\">\n"
+                 "    }\n"
+                 "    <operator:add>\n"
+                 "    <integer:2>\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
+    
     parser_parse(parser,
                  "self.Dog(7) = new Dog(\"Fido\", 3)\r\n"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"self\">\n"
+                 "    <string:\"Dog\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <integer:7>\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "  <expression> {\n"
+                 "    <operator:new>\n"
+                 "    <string:\"Dog\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <string:\"Fido\">\n"
+                 "      }\n"
+                 "      <expression> {\n"
+                 "        <integer:3>\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
 
     parser_parse(parser,
                  "self.Dog(3) = inAnimals(16).getDog(14)"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"self\">\n"
+                 "    <string:\"Dog\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <integer:3>\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "  <expression> {\n"
+                 "    <path> {\n"
+                 "      <string:\"inAnimals\">\n"
+                 "      <list> {\n"
+                 "        <expression> {\n"
+                 "          <integer:16>\n"
+                 "        }\n"
+                 "      }\n"
+                 "      <string:\"getDog\">\n"
+                 "      <list> {\n"
+                 "        <expression> {\n"
+                 "          <integer:14>\n"
+                 "        }\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
 
     parser_parse(parser,
                  "self.Title = inMofset.getName() + \" \" + inBoggle.getSex()"
                  );
-    ast_walk(parser->ast, ast_debug_walker, NULL);
-    
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"self\">\n"
+                 "    <string:\"Title\">\n"
+                 "  }\n"
+                 "  <expression> {\n"
+                 "    <path> {\n"
+                 "      <string:\"inMofset\">\n"
+                 "      <string:\"getName\">\n"
+                 "      <list> {\n"
+                 "      }\n"
+                 "    }\n"
+                 "    <operator:add>\n"
+                 "    <string:\" \">\n"
+                 "    <operator:add>\n"
+                 "    <path> {\n"
+                 "      <string:\"inBoggle\">\n"
+                 "      <string:\"getSex\">\n"
+                 "      <list> {\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
     
     return NULL;
 }
