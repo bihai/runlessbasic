@@ -27,13 +27,14 @@ struct Parser
 };
 
 
-static void _error(Parser *in_parser, Token in_token, char *in_message)
+static AstNode* _error(Parser *in_parser, Token in_token, char *in_message)
 {
     in_parser->error_message = in_message;
     in_parser->error_offset = in_token.offset;
+    return NULL;
 }
 
-#define SYNTAX(err) _error(in_parser, token, err);
+#define SYNTAX(err) return _error(in_parser, token, err);
 
 
 static AstNode* _parse_path(Parser *in_parser);
@@ -497,10 +498,12 @@ static AstNode* _parse_class(Parser *in_parser)
 
 
 
-void parser_parse(Parser *in_parser, char *in_source)
+Boolean parser_parse(Parser *in_parser, char *in_source)
 {
     in_parser->lexer = lexer_create(in_source);
     in_parser->ast = in_parser->init(in_parser);
+    if (in_parser->error_message) return False;
+    return True;
 }
 
 
@@ -771,7 +774,7 @@ static const char* _test_1()
     safe_free(result);
 
     parser_parse(parser,
-                 "self.Dog(3) = inAnimals(16).getDog(14)"
+                 "self.Dog(3) = inAnimals(16).getDog(14)\n"
                  );
     result = NULL;
     ast_walk(parser->ast, ast_string_walker, &result);
@@ -805,7 +808,7 @@ static const char* _test_1()
     safe_free(result);
 
     parser_parse(parser,
-                 "self.Title = inMofset.getName() + \" \" + inBoggle.getSex()"
+                 "self.Title = inMofset.getName() + \" \" + inBoggle.getSex()\n"
                  );
     result = NULL;
     ast_walk(parser->ast, ast_string_walker, &result);
@@ -833,6 +836,10 @@ static const char* _test_1()
                  "  }\n"
                  "}\n", result) == 0);
     safe_free(result);
+    
+    
+        
+    
     
     return NULL;
 }
