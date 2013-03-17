@@ -7,6 +7,60 @@ A test case methodology for the BASIC statement parser.
 
 ### Successful Parses ######
 
+#### Complex Expressions #####
+
+	"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+	Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+	
+##### Errors ######
+	
+	"The answer is " + + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+	"The answer is " + Str(42 + (0 * anotherLocal errorLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+	"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")) "Error"
+	"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")("Error")) + Str(Not (bob.type = "builder"))
+	Format(-x + (y - -z), "-0.00", ) + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+	Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()))
+	Format(-x + (y - -z), "-0.00") + " " + (pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+
+#### Assignments #####
+
+Where <complex-expression> is one of the above (Complex Expressions).
+
+	local = <complex-expression>
+	self.property = <complex-expression>
+	localObjectRef.property = <complex-expression>
+	localObjectRef.propertyA.propertyB = <complex-expression>
+	localArray(1) = <complex-expression>
+	localArray(1,2) = <complex-expression>
+	localArray(self.property) = <complex-expression>
+	localArray(self.propertyA, localB.propertyC) = <complex-expression>
+
+
+#### Calls #####
+
+	Super.MethodA
+	Super.MethodA(1, 2)
+	Super.MethodA 1, 2
+	Super.MethodA <complex-expression>
+	Super.MethodA <complex-expression-1>, <complex-expression-2>
+	Super.MethodA(<complex-expression-1>, <complex-expression-2>)
+	Self.MethodA
+	MethodA
+	Namespace1.Class1.MethodA
+	Class1.MethodA
+	LocalArray(<complex-expression>).Method 42
+	LocalArray(<complex-expression>).Method(42)
+	LocalArray(<complex-expression>).Method(40, 2)
+	LocalArray(<complex-expression>).Method <complex-expression-1>, <complex-expression-2>, 83
+
+
+
+
+
+
+#### Original Tests #####
+
 	Beep
 	Beep(3)
 	System.Beep
@@ -25,11 +79,11 @@ A test case methodology for the BASIC statement parser.
 	z5 (("cool") + str(5)), pickle
 	z5 ("cool"), pickle
 
-
-### Syntax Errors ######
+##### Errors #####
 
 	x = z5((2 - -y) And (bob.theBuilder = "cool")), picle
 	z5 + (2 - -y) = 7 And (bob.theBuilder = "cool")
+
 
 
 ## Methodology #######
@@ -47,12 +101,12 @@ A test case methodology for the BASIC statement parser.
 		*	Simple literals
 		*	Complex expressions
 			*	Literal
+			*	Local
 			*	Subexpression
 			*	Function call
 			*	Negation operator
 			*	Logical Not
 			*	Equal operator
-	*	Super constructor
 	*	Super method implementation
 	*	This method
 	*	Unscoped method
@@ -65,7 +119,13 @@ A test case methodology for the BASIC statement parser.
 		*	Local
 		*	Scoped instance variable
 		*	Scoped object property
+		*	Property of a scoped object property (sub-property)
 		*	Array
+			*	Simple integer index
+			*	Multiple integer indicies
+			*	Local index
+			*	Scoped object property index
+			*	Property of a bi-dimension array of a bi-dimension array
 	*	Value
 		*	Complex expressions (as above)
 	
