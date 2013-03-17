@@ -1,3 +1,492 @@
+parser.tests
+RunlessBasic
+Copyright (c) 2013 Joshua Hawcroft <dev@joshhawcroft.com>
+
+
+####INPUT			TEST: 1
+Super.MethodA
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+  }
+}
+
+####TEST
+####INPUT			TEST: 2
+Super.MethodA(1, 2)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+      <expression> {
+        <integer:2>
+      }
+    }
+  }
+}
+
+####TEST
+
+
+####INPUT			TEST: 3
+Super.MethodA 1, 2
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+      <expression> {
+        <integer:2>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 4
+Super.MethodA "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 5
+Super.MethodA "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")), Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"Format">
+          <list> {
+            <expression> {
+              <expression> {
+                <operator:negate>
+                <path> {
+                  <string:"x">
+                }
+              }
+              <operator:add>
+              <expression> {
+                <path> {
+                  <string:"y">
+                }
+                <operator:subtract>
+                <expression> {
+                  <operator:negate>
+                  <path> {
+                    <string:"z">
+                  }
+                }
+              }
+            }
+            <expression> {
+              <string:"-0.00">
+            }
+          }
+        }
+        <operator:add>
+        <string:" ">
+        <operator:add>
+        <path> {
+          <string:"pancakes">
+          <list> {
+            <expression> {
+              <integer:0>
+            }
+          }
+          <string:"GetTitle">
+          <list> {
+            <expression> {
+              <string:"alpha">
+            }
+            <expression> {
+              <string:"beta">
+            }
+            <expression> {
+              <path> {
+                <string:"petunias">
+                <string:"getCount">
+                <list> {
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 6
+Super.MethodA("The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")), Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"Format">
+          <list> {
+            <expression> {
+              <expression> {
+                <operator:negate>
+                <path> {
+                  <string:"x">
+                }
+              }
+              <operator:add>
+              <expression> {
+                <path> {
+                  <string:"y">
+                }
+                <operator:subtract>
+                <expression> {
+                  <operator:negate>
+                  <path> {
+                    <string:"z">
+                  }
+                }
+              }
+            }
+            <expression> {
+              <string:"-0.00">
+            }
+          }
+        }
+        <operator:add>
+        <string:" ">
+        <operator:add>
+        <path> {
+          <string:"pancakes">
+          <list> {
+            <expression> {
+              <integer:0>
+            }
+          }
+          <string:"GetTitle">
+          <list> {
+            <expression> {
+              <string:"alpha">
+            }
+            <expression> {
+              <string:"beta">
+            }
+            <expression> {
+              <path> {
+                <string:"petunias">
+                <string:"getCount">
+                <list> {
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 7
+Self.MethodA
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"MethodA">
+  }
+}
+
+####TEST
+####INPUT			TEST: 8
+MethodA
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"MethodA">
+  }
+}
+
+####TEST
+####INPUT			TEST: 9
+Namespace1.Class1.MethodA
+
+####OUTPUT
+****####TEST     this is failing probably because Class is being recognised by the lexer as a keyword 
+####INPUT			TEST: 10
+Class1.MethodA
+
+####OUTPUT
+####TEST
+####INPUT
+LocalArray(<complex-expression>).Method 42
+
+####OUTPUT
+####TEST
+####INPUT
+LocalArray(<complex-expression>).Method(42)
+
+####OUTPUT
+####TEST
+####INPUT
+LocalArray(<complex-expression>).Method(40, 2)
+
+####OUTPUT
+####TEST
+####INPUT
+LocalArray(<complex-expression>).Method <complex-expression-1>, <complex-expression-2>, 83
+
+####OUTPUT
+####TEST
+####INPUT
+local = <complex-expression>
+
+####OUTPUT
+####TEST
+####INPUT
+self.property = <complex-expression>
+
+####OUTPUT
+####TEST
+####INPUT
+localObjectRef.property = <complex-expression>
+
+####OUTPUT
+####TEST
+####INPUT
+localObjectRef.propertyA.propertyB = <complex-expression>
+
+####OUTPUT
+####TEST
+####INPUT
+localArray(1) = <complex-expression>
+
+####OUTPUT
+####TEST
+####INPUT
+localArray(1,2) = <complex-expression>
+
+####OUTPUT
+####TEST
+####INPUT
+localArray(<complex-expression>) = "Test"
+
+####OUTPUT
+####TEST
+####INPUT
+localArray(<complex-expression-1>, <complex-expression-2>) = "Test"
+
+####OUTPUT
+####TEST
+####INPUT
+localArray(self.property) = <complex-expression>
+
+####OUTPUT
+####TEST
+####INPUT
+localArray(self.propertyA, localB.propertyC) = <complex-expression>
+
+####OUTPUT
+####TEST
+
+######EXPRS
+"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+	Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+########ERRORS
+
+####
+"The answer is " + + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####
+"The answer is " + Str(42 + (0 * anotherLocal errorLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####
+"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")) "Error"
+
+####
+"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")("Error")) + Str(Not (bob.type = "builder"))
+
+####
+Format(-x + (y - -z), "-0.00", ) + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+	
+####
+Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()))
+
+####
+Format(-x + (y - -z), "-0.00") + " " + (pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+
+
+
+##################################
 ####INPUT
 Beep
 
@@ -8,6 +497,12 @@ Beep
   }
 }
 
+####TEST
+
+####INPUT
+x = z5((2 - -y) And (bob.theBuilder = \"cool\")), picle
+
+####OUTPUT
 ####TEST
 
 ####INPUT
