@@ -29,6 +29,7 @@ struct Parser
 
 static AstNode* _error(Parser *in_parser, Token in_token, char *in_message)
 {
+    if (in_parser->error_message) return NULL;
     in_parser->error_message = in_message;
     in_parser->error_offset = in_token.offset;
     //abort();
@@ -257,7 +258,10 @@ static AstNode* _parse_expression(Parser *in_parser)
         else break;
         
         /* expecting another operand */
-        ast_append(expr, _parse_operand(in_parser));
+        operand = _parse_operand(in_parser);
+        if (!operand)
+            SYNTAX("Expected operand");
+        ast_append(expr, operand);
     }
     
     return expr;
@@ -269,8 +273,9 @@ static AstNode* _parse_expression(Parser *in_parser)
  so the function can handle lists of almost anything! */
 static AstNode* _parse_list(Parser *in_parser, AstNode*(*in_of)(Parser*), Boolean no_parens)
 {
-    AstNode *list;
+    AstNode *list, *item;
     Token token;
+    Boolean require_item;
     
     if (!no_parens)
     {
@@ -291,15 +296,20 @@ static AstNode* _parse_list(Parser *in_parser, AstNode*(*in_of)(Parser*), Boolea
         return list;
     }
     
+    require_item = False;
     for (;;)
     {
         /* parse whatever it is we have a list of */
-        ast_append(list, in_of(in_parser));
+        item = in_of(in_parser);
+        if (require_item && (!item))
+            SYNTAX("Expected expression here");
+        ast_append(list, item);
         
         /* look for , */
         token = lexer_peek(in_parser->lexer, 0);
         if (token.type != TOKEN_COMMA) break;
         lexer_get(in_parser->lexer);
+        require_item = True;
     }
     
     if (!no_parens)
@@ -596,6 +606,7 @@ static const char* _test_case_runner(void *in_user, int in_case_number, const ch
 {
     char *result;
     char *err;
+    static char err_msg_buffer[1024];
     err = NULL;
 //    if (in_case_number == 24)
 //    {
@@ -606,9 +617,10 @@ static const char* _test_case_runner(void *in_user, int in_case_number, const ch
     ast_walk(g_test_parser->ast, ast_string_walker, &result);
     if (result == NULL)
     {
-        if (strcmp(g_test_parser->error_message, in_output) != 0)
+        snprintf(err_msg_buffer, 1024, "%ld: %s", g_test_parser->error_offset, g_test_parser->error_message);
+        if (strcmp(err_msg_buffer, in_output) != 0)
         //if (strlen(in_output) != 0)
-            err = g_test_parser->error_message;
+            err = err_msg_buffer;
     }
     else
     {
