@@ -608,7 +608,7 @@ static const char* _test_case_runner(void *in_user, int in_case_number, const ch
     {
         if (strcmp(g_test_parser->error_message, in_output) != 0)
         //if (strlen(in_output) != 0)
-            err = "error";
+            err = g_test_parser->error_message;
     }
     else
     {
