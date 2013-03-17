@@ -55,23 +55,6 @@ typedef enum {
 struct AstNode;
 typedef struct AstNode AstNode;
 
-struct AstNode
-{
-    AstNodeType     type;
-    union
-    {
-        struct
-        {
-            int             count;
-            AstNode         **nodes;
-        }               list;
-        char            *string;
-        long            integer;
-        double          real;
-    }               value;
-};
-
-
 
 AstNode* ast_create(AstNodeType in_type);
 AstNode* ast_create_string(const char *inString);
@@ -94,6 +77,19 @@ Boolean ast_string_walker(AstNode *in_node, Boolean in_end, int in_level, void *
 
 void ast_dispose(AstNode *in_tree);
 
+enum {
+    AST_FIRST = 0,
+    AST_LAST = -1,
+};
+
+AstNode* ast_child(AstNode *in_node, int in_child);
+AstNode* ast_remove(AstNode *in_node, int in_child);
+void ast_insert(AstNode *in_node, int in_before, AstNode *in_child);
+void ast_prepend(AstNode *in_node, AstNode *in_child);
+
+Boolean ast_is(AstNode *in_node, AstNodeType in_type);
+
+int ast_count(AstNode *in_node);
 
 
 

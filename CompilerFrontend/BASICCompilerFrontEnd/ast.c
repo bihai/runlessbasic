@@ -12,6 +12,25 @@
 
 #include "ast.h"
 #include "memory.h"
+#include "test.h"
+
+
+struct AstNode
+{
+    AstNodeType     type;
+    union
+    {
+        struct
+        {
+            int             count;
+            AstNode         **nodes;
+        }               list;
+        char            *string;
+        long            integer;
+        double          real;
+    }               value;
+};
+
 
 
 static char* _string_clone(const char *in_string)
@@ -245,30 +264,133 @@ Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *i
 }
 
 
-void ast_dispose(AstNode *in_tree)
+static Boolean _has_list(AstNode *in_node)
 {
-    int i;
-    if (!in_tree) return;
-    switch (in_tree->type)
+    switch (in_node->type)
     {
         case AST_EXPRESSION:
         case AST_LIST:
         case AST_PATH:
         case AST_STATEMENT:
-            for (i = 0; i < in_tree->value.list.count; i++)
-                ast_dispose(in_tree->value.list.nodes[i]);
-            break;
+            return True;
+        default:
+            return False;
+    }
+}
+
+
+static Boolean _has_string(AstNode *in_node)
+{
+    switch (in_node->type)
+    {
         case AST_OPERATOR:
         case AST_STRING:
-            if (in_tree->value.string)
-                safe_free(in_tree->value.string);
-            break;
+            return True;
         default:
-            break;
+            return False;
+    }
+}
+
+
+void ast_dispose(AstNode *in_tree)
+{
+    int i;
+    if (!in_tree) return;
+    if (_has_list(in_tree))
+    {
+        for (i = 0; i < in_tree->value.list.count; i++)
+            ast_dispose(in_tree->value.list.nodes[i]);
+    }
+    else if (_has_string(in_tree))
+    {
+        if (in_tree->value.string)
+            safe_free(in_tree->value.string);
     }
     safe_free(in_tree);
 }
 
+
+AstNode* ast_child(AstNode *in_node, int in_child)
+{
+    assert(in_node);
+    assert(in_child >= -1);
+    if (!_has_list(in_node)) return NULL;
+    if (in_node->value.list.count == 0) return NULL;
+    if (in_child == AST_LAST)
+        in_child = in_node->value.list.count-1;
+    else if (in_child >= in_node->value.list.count)
+        return NULL;
+    return in_node->value.list.nodes[in_child];
+}
+
+
+AstNode* ast_remove(AstNode *in_node, int in_child)
+{
+    assert(in_node);
+    assert(in_child >= -1);
+    
+    AstNode *result;
+    
+    if (!_has_list(in_node)) return NULL;
+    if (in_node->value.list.count == 0) return NULL;
+    if (in_child == AST_LAST)
+        in_child = in_node->value.list.count-1;
+    else if (in_child >= in_node->value.list.count)
+        return NULL;
+    
+    result = in_node->value.list.nodes[in_child];
+    
+    /* don't actually remove the child, just insert a NULL pointer,
+     our walker function will skip over this anyway and our tree should
+     be short-lived enough that it doesn't matter */
+    in_node->value.list.nodes[in_child] = NULL;
+    
+    return result;
+}
+
+
+Boolean ast_is(AstNode *in_node, AstNodeType in_type)
+{
+    if (!in_node)
+        return (in_type == AST_NULL);
+    else
+        return (in_node->type == in_type);
+}
+
+
+void ast_insert(AstNode *in_node, int in_before, AstNode *in_child)
+{
+    assert(in_node);
+    assert(in_before >= 0);
+    assert(in_child);
+    
+    in_node->value.list.nodes = safe_realloc(in_node->value.list.nodes,
+                                             sizeof(AstNode*) * (++in_node->value.list.count));
+    
+    if (in_before < in_node->value.list.count-1)
+        memmove(in_node->value.list.nodes + in_before + 1, in_node->value.list.nodes + in_before,
+                sizeof(AstNode*) * ( in_node->value.list.count - in_before - 1 ));
+    else
+        in_before = in_node->value.list.count-1;
+    
+    in_node->value.list.nodes[ in_before ] = in_child;
+}
+
+
+void ast_prepend(AstNode *in_node, AstNode *in_child)
+{
+    ast_insert(in_node, 0, in_child);
+}
+
+
+int ast_count(AstNode *in_node)
+{
+    return in_node->value.list.count;
+}
+
+
+/* TODO: write tests for AST module and include assertions,
+  finish sanity checks in functions and decide what level to include */
 
 
 
