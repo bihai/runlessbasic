@@ -72,6 +72,9 @@ static AstNode* _parse_operand(Parser *in_parser)
                 SYNTAX("Expecting )");
             break;
             
+        case TOKEN_SELF:
+        case TOKEN_SUPER:
+        case TOKEN_ME:
         case TOKEN_IDENTIFIER:
             /* path */
             result = _parse_path(in_parser);
@@ -594,6 +597,10 @@ static const char* _test_case_runner(void *in_user, int in_case_number, const ch
     char *result;
     char *err;
     err = NULL;
+//    if (in_case_number == 24)
+//    {
+//        err = NULL;
+//    }
     parser_parse(g_test_parser, (char*)in_input);
     result = NULL;
     ast_walk(g_test_parser->ast, ast_string_walker, &result);
