@@ -31,6 +31,7 @@ static AstNode* _error(Parser *in_parser, Token in_token, char *in_message)
 {
     in_parser->error_message = in_message;
     in_parser->error_offset = in_token.offset;
+    //abort();
     return NULL;
 }
 
@@ -112,8 +113,9 @@ static AstNode* _parse_operand(Parser *in_parser)
             break;
             
         default:
-            SYNTAX("Expecting expression");
-            break;
+            if (negate)
+                ast_dispose(negate);
+            return NULL;
     }
     
     if (negate)
@@ -158,7 +160,7 @@ static Boolean _is_binary_operator(enum LexerTokenType in_type)
  there must be an expression or this is a syntax error. */
 static AstNode* _parse_expression(Parser *in_parser)
 {
-    AstNode *expr;
+    AstNode *expr, *operand;
     Token token;
     
     /* create expression */
@@ -196,7 +198,9 @@ static AstNode* _parse_expression(Parser *in_parser)
     
     /* expecting an operand:
      subexpression, path, or literal */
-    ast_append(expr, _parse_operand(in_parser));
+    operand = _parse_operand(in_parser);
+    if (!operand) return NULL;
+    ast_append(expr, operand);
     
     /* parse remaining terms (if any) */
     for (;;)
@@ -348,6 +352,7 @@ static AstNode* _parse_path(Parser *in_parser)
             if (token.type != TOKEN_DOT) break;
             lexer_get(in_parser->lexer);
         }
+        else break;
         
         token = lexer_peek(in_parser->lexer, 0);
     }
@@ -363,6 +368,9 @@ static AstNode* _parse_statement(Parser *in_parser)
 {
     Token token;
     AstNode *path;
+    AstNode *list;
+    AstNode *last;
+    int i, c;
     
     /* begin statement */
     in_parser->statement = ast_create(AST_STATEMENT);
@@ -376,6 +384,8 @@ static AstNode* _parse_statement(Parser *in_parser)
         path = _parse_path(in_parser);
         ast_append(in_parser->statement, path);
         
+        //ast_walk(path, ast_debug_walker, NULL);
+        
         /* see if statement is an assignment */
         token = lexer_peek(in_parser->lexer, 0);
         if (token.type == TOKEN_EQUAL)
@@ -386,7 +396,34 @@ static AstNode* _parse_statement(Parser *in_parser)
         /* see if statement is a method call with unbracketed parameters */
         else if (token.type != TOKEN_NEW_LINE)
         {
-            ast_append(path, _parse_list(in_parser, _parse_expression, True));
+            //ast_walk(path, ast_debug_walker, NULL);
+            
+            if (token.type == TOKEN_COMMA)
+            {
+                /* the first argument has already been accidentally parsed on to the end
+                 of the path */
+                lexer_get(in_parser->lexer);
+            }
+            
+            /* parse the argument list */
+            list = _parse_list(in_parser, _parse_expression, True);
+            
+            //ast_walk(list, ast_debug_walker, NULL);
+            
+            /* check for an existing parameter mistaken as part of the preceeding path */
+            last = ast_child(path, AST_LAST);
+            if (ast_is(last, AST_LIST))
+            {
+                /* move each of the items from the parsed list into the end of the existing list */
+                c = ast_count(list);
+                for (i = 0; i < c; i++)
+                    ast_append(last, ast_remove(list, 0));
+                ast_dispose(list);
+                //ast_prepend(list, ast_remove(path, AST_LAST));
+            }
+            else
+                /* append the argument list */
+                ast_append(path, list);
         }
         
         /* expect end of line */
@@ -495,14 +532,25 @@ static AstNode* _parse_class(Parser *in_parser)
 
 
 
-
+static void _reset(Parser *in_parser)
+{
+    in_parser->error_message = NULL;
+    if (in_parser->ast) ast_dispose(in_parser->ast);
+}
 
 
 Boolean parser_parse(Parser *in_parser, char *in_source)
 {
+    _reset(in_parser);
+    
     in_parser->lexer = lexer_create(in_source);
     in_parser->ast = in_parser->init(in_parser);
-    if (in_parser->error_message) return False;
+    if (in_parser->error_message)
+    {
+        ast_dispose(in_parser->ast);
+        in_parser->ast = NULL;
+        return False;
+    }
     return True;
 }
 
@@ -837,13 +885,119 @@ static const char* _test_1()
                  "}\n", result) == 0);
     safe_free(result);
     
+    ///
     
+    parser_parse(parser,
+                 "x = z5 ((2 - -y) And (bob.theBuilder = \"cool\")) + 9\n"
+                 );
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"x\">\n"
+                 "  }\n"
+                 "  <expression> {\n"
+                 "    <path> {\n"
+                 "      <string:\"z5\">\n"
+                 "      <list> {\n"
+                 "        <expression> {\n"
+                 "          <expression> {\n"
+                 "            <integer:2>\n"
+                 "            <operator:subtract>\n"
+                 "            <expression> {\n"
+                 "              <operator:negate>\n"
+                 "              <path> {\n"
+                 "                <string:\"y\">\n"
+                 "              }\n"
+                 "            }\n"
+                 "          }\n"
+                 "          <operator:logical-and>\n"
+                 "          <expression> {\n"
+                 "            <path> {\n"
+                 "              <string:\"bob\">\n"
+                 "              <string:\"theBuilder\">\n"
+                 "            }\n"
+                 "            <operator:equal>\n"
+                 "            <string:\"cool\">\n"
+                 "          }\n"
+                 "        }\n" // first item expr
+                 "      }\n"// list - args to z5
+                 "    }\n"//path
+                 "    <operator:add>\n"
+                 "    <integer:9>\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
+    
+    CHECK(! parser_parse(parser,
+                         "x = z5((2 - -y) And (bob.theBuilder = \"cool\")), picle\n"
+                         ));
+    
+    parser_parse(parser,
+                 "z5 ((\"cool\") + str(5)), pickle \n"
+                 );
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"z5\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <expression> {\n"
+                 "          <string:\"cool\">\n"
+                 "        }\n"
+                 "        <operator:add>\n"
+                 "        <path> {\n"
+                 "          <string:\"str\">\n"
+                 "          <list> {\n"
+                 "            <expression> {\n"
+                 "              <integer:5>\n"
+                 "            }\n"
+                 "          }\n"
+                 "        }\n"
+                 "      }\n"
+                 "      <expression> {\n"
+                 "        <path> {\n"
+                 "          <string:\"pickle\">\n"
+                 "        }\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
         
+    parser_parse(parser,
+                 "z5 (\"cool\"), pickle \n"
+                 );
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"z5\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <string:\"cool\">\n"
+                 "      }\n"
+                 "      <expression> {\n"
+                 "        <path> {\n"
+                 "          <string:\"pickle\">\n"
+                 "        }\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
     
+    CHECK( !parser_parse(parser,
+                 "z5 + (2 - -y) = 7 And (bob.theBuilder = \"cool\")\n"
+                 ) );
+ 
     
     return NULL;
 }
 
+/*Queue error messages so we can pick the earliest one
+ and clear errors if all ok?*/
 
 
 void parser_run_tests()
