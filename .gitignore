@@ -1,6 +1,8 @@
 
 .DS_Store
 
+ReferenceDocs/Copyrighted/
+
 CompilerFrontend/BASICCompilerFrontEnd.xcodeproj/project.pbxproj
 
 CompilerFrontend/BASICCompilerFrontEnd.xcodeproj/project.xcworkspace/contents.xcworkspacedata
