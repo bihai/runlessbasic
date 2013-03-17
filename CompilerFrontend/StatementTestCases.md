@@ -33,6 +33,8 @@ Where <complex-expression> is one of the above (Complex Expressions).
 	localObjectRef.propertyA.propertyB = <complex-expression>
 	localArray(1) = <complex-expression>
 	localArray(1,2) = <complex-expression>
+	localArray(<complex-expression>) = "Test"
+	localArray(<complex-expression-1>, <complex-expression-2>) = "Test"
 	localArray(self.property) = <complex-expression>
 	localArray(self.propertyA, localB.propertyC) = <complex-expression>
 
