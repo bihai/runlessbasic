@@ -592,12 +592,24 @@ static void _test_case_result(void *in_user, int in_case_number, long in_line_nu
 static const char* _test_case_runner(void *in_user, int in_case_number, const char *in_input, const char *in_output)
 {
     char *result;
+    char *err;
+    err = NULL;
     parser_parse(g_test_parser, (char*)in_input);
     result = NULL;
-    
     ast_walk(g_test_parser->ast, ast_string_walker, &result);
-    if (strcmp(result, in_output) != 0) return "Error";
-    return NULL;
+    if (result == NULL)
+    {
+        if (strcmp(g_test_parser->error_message, in_output) != 0)
+        //if (strlen(in_output) != 0)
+            err = "error";
+    }
+    else
+    {
+        if (strcmp(result, in_output) != 0)
+            err = result;
+        //free(result);
+    }
+    return err;
 }
 
 
@@ -1074,7 +1086,7 @@ void parser_run_tests()
     err = NULL;
     
     if (!err) err = _test_1();
-    if (!err) err = _test_2();
+    
     
     if (err)
     {
@@ -1083,6 +1095,8 @@ void parser_run_tests()
     }
     
     printf("parser_run_tests(): OK\n");
+    
+    if (!err) err = _test_2();
 }
 
 
