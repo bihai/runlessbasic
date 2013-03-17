@@ -416,7 +416,7 @@ static Token _lexer_get_token(Lexer *inLexer)
             
             if (! (is_text_token && (inLexer->last_was_text || (inLexer->source_offset != source_start))) )
             {
-            
+                /* compare characters of known token and input text */
                 for (c = 0; (
                              (c < len_token) &&
                              (inLexer->source_offset[c] != 0) &&
@@ -425,7 +425,7 @@ static Token _lexer_get_token(Lexer *inLexer)
                 {
                     if ( (c+1 == len_token) &&
                         (
-                            ( is_text_token && (!isalpha(inLexer->source_offset[c+1])) ) ||
+                            ( is_text_token && (!isalnum(inLexer->source_offset[c+1])) ) ||
                             (! is_text_token)
                         ) )
                     {
@@ -1254,7 +1254,7 @@ static const char* test_11(void)
     
     lexer = _lexer_create("DiM name // this is comment\r\n"
                          "name = \"Hello &u0022cruel\"\" world!\"\r"
-                         "cOnsT3.14159\n"
+                         "cOnsT 3.14159\n"
                          "&b1001ANd\t 私はガラ=\"pickle 食べ\"eND", False);
     CHECK(lexer);
     token = _lexer_get_token(lexer);
@@ -1329,6 +1329,8 @@ static const char* test_11(void)
     
     token = _lexer_get_token(lexer);
     CHECK(token.type == TOKEN_CONST);
+    token = _lexer_get_token(lexer);
+    CHECK(token.type == TOKEN_SPACE);
     token = _lexer_get_token(lexer);
     CHECK(token.type == TOKEN_UNRECOGNISED);
     CHECK(token.text);
@@ -1772,6 +1774,21 @@ static const char* test_19()
     CHECK(token.type == TOKEN_LIT_INTEGER);
     token = lexer_peek(lexer, 5);
     CHECK(token.type == TOKEN_IDENTIFIER);
+    
+    
+    lexer = lexer_create("Namespace1.Class1.MethodA");
+    CHECK(lexer);
+    token = lexer_peek(lexer, 0);
+    CHECK(token.type == TOKEN_IDENTIFIER);
+    token = lexer_peek(lexer, 1);
+    CHECK(token.type == TOKEN_DOT);
+    token = lexer_peek(lexer, 2);
+    CHECK(token.type == TOKEN_IDENTIFIER);
+    token = lexer_peek(lexer, 3);
+    CHECK(token.type == TOKEN_DOT);
+    token = lexer_peek(lexer, 4);
+    CHECK(token.type == TOKEN_IDENTIFIER);
+    
     
     return NULL;
 }
