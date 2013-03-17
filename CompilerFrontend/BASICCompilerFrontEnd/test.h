@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Joshua Hawcroft. All rights reserved.
 //
 
+#include <assert.h>
+
 #ifndef _TEST_H
 #define _TEST_H
 
