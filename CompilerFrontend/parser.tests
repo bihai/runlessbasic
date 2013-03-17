@@ -1,0 +1,48 @@
+####INPUT
+Beep
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Beep">
+  }
+}
+
+####TEST
+
+####INPUT
+System.Process(1).Activate(System.Process.Behind, System.Process.Now)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"Process">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+    }
+    <string:"Activate">
+    <list> {
+      <expression> {
+        <path> {
+          <string:"System">
+          <string:"Process">
+          <string:"Behind">
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"System">
+          <string:"Process">
+          <string:"Now">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+
+

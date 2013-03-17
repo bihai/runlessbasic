@@ -577,6 +577,71 @@ Parser* parser_create(void)
 #ifdef DEBUG
 
 
+static Parser *g_test_parser;
+
+
+static void _test_case_result(void *in_user, int in_case_number, long in_line_number, const char *in_error)
+{
+    if (in_error)
+        printf("parser: case %d, line %ld: failed: %s\n", in_case_number, in_line_number, in_error);
+    else
+        printf("parser: case %d, line %ld: OK\n", in_case_number, in_line_number);
+}
+
+
+static const char* _test_case_runner(void *in_user, int in_case_number, const char *in_input, const char *in_output)
+{
+    char *result;
+    parser_parse(g_test_parser, (char*)in_input);
+    result = NULL;
+    
+    ast_walk(g_test_parser->ast, ast_string_walker, &result);
+    if (strcmp(result, in_output) != 0) return "Error";
+    return NULL;
+}
+
+
+static const char* _test_2()
+{
+    g_test_parser = parser_create();
+    CHECK(g_test_parser);
+    
+    return test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser.tests",
+                          _test_case_runner, _test_case_result, NULL);
+    
+    /*Parser *parser;
+    char *result;
+    
+    parser = parser_create();
+    CHECK(parser);
+    
+    parser->init = &_parse_statement;
+    
+    parser_parse(parser,
+                 "local "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")) \n"
+                 );
+    result = NULL;
+    ast_walk(parser->ast, ast_string_walker, &result);
+    CHECK(strcmp("<statement> {\n"
+                 "  <path> {\n"
+                 "    <string:\"z5\">\n"
+                 "    <list> {\n"
+                 "      <expression> {\n"
+                 "        <string:\"cool\">\n"
+                 "      }\n"
+                 "      <expression> {\n"
+                 "        <path> {\n"
+                 "          <string:\"pickle\">\n"
+                 "        }\n"
+                 "      }\n"
+                 "    }\n"
+                 "  }\n"
+                 "}\n", result) == 0);
+    safe_free(result);
+    */
+    return NULL;
+}
+
 
 
 
@@ -1009,6 +1074,7 @@ void parser_run_tests()
     err = NULL;
     
     if (!err) err = _test_1();
+    if (!err) err = _test_2();
     
     if (err)
     {
