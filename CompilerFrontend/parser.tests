@@ -3,6 +3,10 @@ RunlessBasic
 Copyright (c) 2013 Joshua Hawcroft <dev@joshhawcroft.com>
 
 
+Successful Parse Cases
+-------------------------------
+
+
 ####INPUT			TEST: 1
 Super.MethodA
 
@@ -1516,38 +1520,72 @@ localArray(self.propertyA, localB.propertyC) = "The answer is " + Str(42 + (0 * 
 
 ####TEST
 
-######EXPRS
-"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
-	Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
 
-########ERRORS
+Error Handling
+-------------------------------
 
-####
-"The answer is " + + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
 
-####
-"The answer is " + Str(42 + (0 * anotherLocal errorLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+####INPUT			TEST: 26		There's two + + signs at the beginning of the expression
+x = "The answer is " + + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
 
-####
-"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")) "Error"
+####OUTPUT
+21: Expected operand
+####TEST
+####INPUT			TEST: 27		There's no operator before the name 'errorLocal', a syntax error
+x = "The answer is " + Str(42 + (0 * anotherLocal errorLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
 
-####
+####OUTPUT
+50: Expecting )
+####TEST
+####INPUT			TEST: 28		"Error" is on the end of the line, making an invalid expression
+x = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")) "Error"
+
+####OUTPUT
+102: Expected end of line
+####TEST
+####INPUT			TEST: 29		Can't start a statement with an expression
 "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")("Error")) + Str(Not (bob.type = "builder"))
 
-####
-Format(-x + (y - -z), "-0.00", ) + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
-	
-####
-Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()))
+####OUTPUT
+0: Expected identifier
+####TEST
+####INPUT			TEST: 30		There's a syntax error, ("Error") is not prefixed by an operator
+x = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")("Error")) + Str(Not (bob.type = "builder"))
 
-####
-Format(-x + (y - -z), "-0.00") + " " + (pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+####OUTPUT
+66: Expecting )
+####TEST
+####INPUT			TEST: 31		Everything after the Format() call is a syntax error
+Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+31: Expected end of line
+####TEST
+####INPUT			TEST: 32		A stray comma in the arguments to Format()
+x = Format(-x + (y - -z), "-0.00", ) + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+33: Expected expression here
+####TEST
+####INPUT			TEST: 33		Too many closing parentheses )
+x = Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()))
+
+####OUTPUT
+101: Expected end of line
+####TEST
+####INPUT			TEST: 34		Missing the last closing parentheses )
+x = Format(-x + (y - -z), "-0.00") + " " + (pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+102: Expecting )
+####TEST
 
 
 
+Original Tests
+--------------------
 
-##################################
-####INPUT
+####INPUT			TEST: 35		Simple method call
 Beep
 
 ####OUTPUT
@@ -1558,15 +1596,14 @@ Beep
 }
 
 ####TEST
-
-####INPUT			TEST: 27
+####INPUT			TEST: 36		There is stuff ", picle" after the call to z5()
 x = z5((2 - -y) And (bob.theBuilder = "cool")), picle
 
 ####OUTPUT
-Expected end of line
+46: Expected end of line
 ####TEST
 
-####INPUT			TEST: 28
+####INPUT			TEST: 37		Chain of calls including class constants as arguments
 System.Process(1).Activate(System.Process.Behind, System.Process.Now)
 
 ####OUTPUT
