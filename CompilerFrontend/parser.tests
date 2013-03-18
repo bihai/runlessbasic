@@ -2064,3 +2064,31 @@ Pragma Errors
 ####TEST
 
 
+
+
+Exit and Continue keywords
+-------------------
+
+####INPUT			TEST: 62		Exit
+Exit
+
+####OUTPUT
+<statement> {
+  <string:"break">
+}
+
+####TEST
+####INPUT			TEST: 63		Continue
+Continue
+
+####OUTPUT
+<statement> {
+  <string:"continue">
+}
+
+####TEST
+
+
+
+
+

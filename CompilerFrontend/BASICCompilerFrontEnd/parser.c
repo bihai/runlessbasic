@@ -462,8 +462,7 @@ static AstNode* _parse_statement(Parser *in_parser)
     else if (token.type == TOKEN_EXIT)
     {
         /* expect end of line */
-        
-        
+        ast_append(stmt, ast_create_string("break"));
         lexer_get(in_parser->lexer);
         token = lexer_get(in_parser->lexer);
         if (token.type != TOKEN_NEW_LINE)
@@ -474,8 +473,7 @@ static AstNode* _parse_statement(Parser *in_parser)
     else if (token.type == TOKEN_CONTINUE)
     {
         /* expect end of line */
-        
-        
+        ast_append(stmt, ast_create_string("continue"));
         lexer_get(in_parser->lexer);
         token = lexer_get(in_parser->lexer);
         if (token.type != TOKEN_NEW_LINE)
