@@ -1529,7 +1529,7 @@ Error Handling
 x = "The answer is " + + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
 
 ####OUTPUT
-21: Expected operand
+23: Expected operand
 ####TEST
 ####INPUT			TEST: 27		There's no operator before the name 'errorLocal', a syntax error
 x = "The answer is " + Str(42 + (0 * anotherLocal errorLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
@@ -1565,7 +1565,7 @@ Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", pet
 x = Format(-x + (y - -z), "-0.00", ) + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
 
 ####OUTPUT
-33: Expected expression here
+35: Expected expression here
 ####TEST
 ####INPUT			TEST: 33		Too many closing parentheses )
 x = Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()))

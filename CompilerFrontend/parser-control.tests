@@ -981,7 +981,7 @@ Next x
 ####OUTPUT
 7: Expected =
 ####TEST
-####INPUT			Test: 30		For loop with bad syntax
+####INPUT			Test: 31		For loop with bad syntax
 For i = 1 To 10 Step a.
 	Proxy.Bob i
 Next
