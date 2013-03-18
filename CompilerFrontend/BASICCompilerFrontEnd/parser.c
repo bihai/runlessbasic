@@ -792,7 +792,6 @@ static AstNode* _parse_for(Parser *in_parser)
     
     /* create the For node */
     cond = ast_create(AST_CONTROL);
-    ast_append(cond, ast_create_string("for"));
     
     /* skip the For keyword */
     lexer_get(in_parser->lexer);
@@ -802,6 +801,7 @@ static AstNode* _parse_for(Parser *in_parser)
     if (token.type == TOKEN_IDENTIFIER)
     {
         /* parse For Next loop */
+        ast_append(cond, ast_create_string("for"));
         ast_append(cond, ast_create_string(token.text));
         
         /* expect = */
@@ -874,7 +874,43 @@ static AstNode* _parse_for(Parser *in_parser)
     else if (token.type == TOKEN_EACH)
     {
         /* parse For Each loop */
+        ast_append(cond, ast_create_string("foreach"));
         
+        /* expect local identifier */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_IDENTIFIER)
+            SYNTAX("Expected identifier");
+        ast_append(cond, ast_create_string(token.text));
+        
+        /* expect In */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_IN)
+            SYNTAX("Expected identifier");
+        
+        /* expect iterable expression */
+        expr = _parse_expression(in_parser);
+        if (!expr) SYNTAX("Expected iterable expression");
+        ast_append(cond, expr);
+        
+        /* expect end of line */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
+        
+        /* expect a block */
+        expr = _parse_block(in_parser);
+        if (!expr) return NULL;
+        ast_append(cond, expr);
+        
+        /* expect Next */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEXT)
+            SYNTAX("Expected Next");
+        
+        /* expect end of line */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
     }
     else
         SYNTAX("Expected identifier");

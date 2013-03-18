@@ -989,5 +989,62 @@ Next
 ####OUTPUT
 23: Expected identifier
 ####TEST
+####INPUT			Test: 32		Simple For Each loop
+For Each item In groceries
+	MsgBox item.name
+Next
 
+####OUTPUT
+<list> {
+  <control> {
+    <string:"foreach">
+    <string:"item">
+    <expression> {
+      <path> {
+        <string:"groceries">
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <path> {
+                <string:"item">
+                <string:"name">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 33		For each with syntax errors
+For Eah item In groceries
+	MsgBox item.name
+Next
+
+####OUTPUT
+8: Expected =
+####TEST
+####INPUT			Test: 34		For each with syntax errors
+For Each self.item In groceries
+	MsgBox item.name
+Next
+
+####OUTPUT
+9: Expected identifier
+####TEST
+####INPUT			Test: 35		For each with syntax errors
+For Each item In groceries
+	MsgBox item.name
+Next item
+
+####OUTPUT
+50: Expected end of line
+####TEST
 
