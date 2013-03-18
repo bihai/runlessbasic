@@ -1271,3 +1271,94 @@ Wend
 }
 
 ####TEST
+####INPUT			Test: 42		Simple Do loop
+Do Until x - y < 5
+	Beep
+Loop
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"do">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:subtract>
+      <path> {
+        <string:"y">
+      }
+      <operator:less-than>
+      <integer:5>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 43		Simple Do loop
+Do
+	Beep
+Loop Until x - y < 5
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"do">
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:subtract>
+      <path> {
+        <string:"y">
+      }
+      <operator:less-than>
+      <integer:5>
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 44		Endless Do loop
+Do
+	Beep
+Loop
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"do">
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 45		Do with syntax error
+Do
+	Beep
+Next
+
+####OUTPUT
+9: Expected Loop
+####TEST
+
