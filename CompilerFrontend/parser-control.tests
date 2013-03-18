@@ -3,7 +3,11 @@ RunlessBasic
 Copyright (c) 2013 Joshua Hawcroft <dev@joshhawcroft.com>
 
 
-####INPUT			TEST: 1
+If...Else...
+----------------
+
+
+####INPUT			TEST: 1			Basic If
 If x = Gobble.getCount() Then
 	Beep
 End If
@@ -35,7 +39,7 @@ End If
 }
 
 ####TEST
-####INPUT			TEST: 2
+####INPUT			TEST: 2			If... Else...
 If x = Gobble.getCount() Then
 	Beep
 Else
@@ -81,7 +85,7 @@ End If
 }
 
 ####TEST
-####INPUT			TEST: 3
+####INPUT			TEST: 3			If...Else If...Else...
 If x = Gobble.getCount() Then
 	Beep
 Else If x = 1 Then
@@ -148,7 +152,7 @@ End If
 }
 
 ####TEST
-####INPUT			TEST: 4
+####INPUT			TEST: 4			If with multi-line block and blank lines
 If True Then
 	Beep
 	
@@ -184,7 +188,7 @@ End If
 }
 
 ####TEST
-####INPUT			TEST: 5
+####INPUT			TEST: 5			If...Else with nesting
 If True Then
 	If False Then
 		MsgBox "This is nonsense!"
@@ -250,7 +254,7 @@ End If
 }
 
 ####TEST
-####INPUT			TEST: 6
+####INPUT			TEST: 6			If missing expression
 If Then
 	Rem Bad Example!
 End If
@@ -258,7 +262,7 @@ End If
 ####OUTPUT
 3: Expected conditional expression
 ####TEST
-####INPUT			TEST: 7
+####INPUT			TEST: 7			If missing expression
 If 
 	Rem Bad Example!
 End If
@@ -266,7 +270,7 @@ End If
 ####OUTPUT
 3: Expected conditional expression
 ####TEST
-####INPUT			TEST: 8
+####INPUT			TEST: 8			If missing Then
 If x = 1
 	Rem Bad Example!
 End If
@@ -274,7 +278,7 @@ End If
 ####OUTPUT
 8: Expected Then
 ####TEST
-####INPUT			TEST: 9
+####INPUT			TEST: 9			Empty If block
 If x = 1 Then
 
 End If
@@ -296,7 +300,7 @@ End If
 }
 
 ####TEST
-####INPUT			TEST: 10
+####INPUT			TEST: 10		If missing End If
 If x = 1 Then
 
 
@@ -304,3 +308,158 @@ If x = 1 Then
 ####OUTPUT
 15: Expected End If
 ####TEST
+####INPUT			TEST: 11		Single line If
+If x = 1 Then Beep
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <integer:1>
+    }
+    <statement> {
+      <path> {
+        <string:"Beep">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 12		Single line If with Else
+If x = 1 Then MsgBox "x is 1" Else MsgBox "x is NOT 1!"
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <integer:1>
+    }
+    <statement> {
+      <path> {
+        <string:"MsgBox">
+        <list> {
+          <expression> {
+            <string:"x is 1">
+          }
+        }
+      }
+    }
+    <statement> {
+      <path> {
+        <string:"MsgBox">
+        <list> {
+          <expression> {
+            <string:"x is NOT 1!">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 13		Single line If with missing statement
+If x = 1 Then 
+
+####OUTPUT
+14: Expected End If
+####TEST
+####INPUT			TEST: 14		Single line If..Else with missing statement
+If x = 1 Then Beep Else
+
+####OUTPUT
+23: Expected end of line
+####TEST
+####INPUT			TEST: 15		If with complex conditional expressions
+If "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")) <> "Bob" Then
+	MsgBox "You stuffed up!"
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <string:"The answer is ">
+      <operator:add>
+      <path> {
+        <string:"Str">
+        <list> {
+          <expression> {
+            <integer:42>
+            <operator:add>
+            <expression> {
+              <integer:0>
+              <operator:multiply>
+              <path> {
+                <string:"anotherLocal">
+              }
+            }
+          }
+        }
+      }
+      <operator:add>
+      <expression> {
+        <string:".">
+        <operator:add>
+        <expression> {
+          <string:" ">
+        }
+      }
+      <operator:add>
+      <path> {
+        <string:"Str">
+        <list> {
+          <expression> {
+            <operator:logical-not>
+            <expression> {
+              <path> {
+                <string:"bob">
+                <string:"type">
+              }
+              <operator:equal>
+              <string:"builder">
+            }
+          }
+        }
+      }
+      <operator:not-equal>
+      <string:"Bob">
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"You stuffed up!">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 16		If with a syntax error
+If If i = 1 Then
+	MsgBox "You stuffed up!"
+End If
+
+####OUTPUT
+3: Expected conditional expression
+####TEST
+
+

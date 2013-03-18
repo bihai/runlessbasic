@@ -453,8 +453,8 @@ static AstNode* _parse_statement(Parser *in_parser)
                 break;
         }
         
-        token = lexer_get(in_parser->lexer);
-        if (token.type != TOKEN_NEW_LINE)
+        token = lexer_peek(in_parser->lexer, 0);
+        if ((token.type != TOKEN_NEW_LINE) && (token.type != TOKEN_ELSE))
             SYNTAX("Expected end of line");
     }
     
@@ -464,8 +464,9 @@ static AstNode* _parse_statement(Parser *in_parser)
         /* expect end of line */
         ast_append(stmt, ast_create_string("break"));
         lexer_get(in_parser->lexer);
-        token = lexer_get(in_parser->lexer);
-        if (token.type != TOKEN_NEW_LINE)
+        
+        token = lexer_peek(in_parser->lexer, 0);
+        if ((token.type != TOKEN_NEW_LINE) && (token.type != TOKEN_ELSE))
             SYNTAX("Expected end of line");
     }
     
@@ -475,8 +476,9 @@ static AstNode* _parse_statement(Parser *in_parser)
         /* expect end of line */
         ast_append(stmt, ast_create_string("continue"));
         lexer_get(in_parser->lexer);
-        token = lexer_get(in_parser->lexer);
-        if (token.type != TOKEN_NEW_LINE)
+        
+        token = lexer_peek(in_parser->lexer, 0);
+        if ((token.type != TOKEN_NEW_LINE) && (token.type != TOKEN_ELSE))
             SYNTAX("Expected end of line");
     }
     
@@ -531,8 +533,8 @@ static AstNode* _parse_statement(Parser *in_parser)
         }
         
         /* expect end of line */
-        token = lexer_get(in_parser->lexer);
-        if (token.type != TOKEN_NEW_LINE)
+        token = lexer_peek(in_parser->lexer, 0);
+        if ((token.type != TOKEN_NEW_LINE) && (token.type != TOKEN_ELSE))
             SYNTAX("Expected end of line");
         
     }
@@ -648,7 +650,24 @@ static AstNode* _parse_if(Parser *in_parser)
     else
     {
         /* parsing a single line If statement */
+        expr = _parse_statement(in_parser);
+        if (!expr) return NULL;
+        ast_append(cond, expr);
         
+        /* handle Else */
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_ELSE)
+        {
+            lexer_get(in_parser->lexer);
+            expr = _parse_statement(in_parser);
+            if (!expr) return NULL;
+            ast_append(cond, expr);
+        }
+        
+        /* expect end of line */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
     }
     
     return cond;
