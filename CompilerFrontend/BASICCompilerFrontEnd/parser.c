@@ -689,16 +689,16 @@ Parser* parser_create(void)
 static Parser *g_test_parser;
 
 
-static void _test_case_result(void *in_user, int in_case_number, long in_line_number, const char *in_error)
+static void _test_case_result(void *in_user, const char *in_file, int in_case_number, long in_line_number, const char *in_error)
 {
     if (in_error)
-        printf("parser: case %d, line %ld: failed: %s\n", in_case_number, in_line_number, in_error);
+        printf("%s: case %d, line %ld: failed: %s\n", in_file, in_case_number, in_line_number, in_error);
     else
-        printf("parser: case %d, line %ld: OK\n", in_case_number, in_line_number);
+        printf("%s: case %d, line %ld: OK\n", in_file, in_case_number, in_line_number);
 }
 
 
-static const char* _test_case_runner(void *in_user, int in_case_number, const char *in_input, const char *in_output)
+static const char* _test_case_runner(void *in_user, const char *in_file, int in_case_number, const char *in_input, const char *in_output)
 {
     char *result;
     char *err;
@@ -729,14 +729,19 @@ static const char* _test_case_runner(void *in_user, int in_case_number, const ch
 void parser_run_tests()
 {
     g_test_parser = parser_create();
+    g_test_parser->init = _parse_statement;
     if (!g_test_parser)
     {
         fprintf(stderr, "Couldn't initalize parser test environment.\n");
         return;
     }
     
-    test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser.tests",
-                          _test_case_runner, _test_case_result, NULL);
+    test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-statement.tests",
+                   _test_case_runner, _test_case_result, NULL);
+    
+    g_test_parser->init = _parse_block;
+    test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-control.tests",
+                   _test_case_runner, _test_case_result, NULL);
 }
 
 
