@@ -63,7 +63,7 @@ const struct KnownToken known_tokens[] = {
     { "inlinec", TOKEN_INLINEC },
     { "handles", TOKEN_HANDLES },
     { "#pragma", TOKEN_PRAGMA },
-    { "object", TOKEN_OBJECT },
+    /*{ "object", TOKEN_OBJECT },*/
     { "static", TOKEN_STATIC },
     { "shared", TOKEN_SHARED },
     { "public", TOKEN_PUBLIC },
