@@ -3,6 +3,39 @@ RunlessBasic
 Copyright (c) 2013 Joshua Hawcroft <dev@joshhawcroft.com>
 
 
+####INPUT			TEST: 1
+If x = Gobble.getCount() Then
+	Beep
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <path> {
+        <string:"Gobble">
+        <string:"getCount">
+        <list> {
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+
 
 
 

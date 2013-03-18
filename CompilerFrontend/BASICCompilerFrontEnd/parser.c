@@ -554,11 +554,61 @@ static AstNode* _parse_statement(Parser *in_parser)
 }
 
 
+
+static AstNode* _parse_block(Parser *in_parser);
+
+
 static AstNode* _parse_if(Parser *in_parser)
 {
+    Token token;
+    AstNode *cond, *expr;
     
+    /* create the If node */
+    cond = ast_create(AST_CONTROL);
+    ast_append(cond, ast_create_string("if"));
     
-    return NULL;
+    /* skip the If keyword */
+    lexer_get(in_parser->lexer);
+    
+    /* expect an expression */
+    expr = _parse_expression(in_parser);
+    if (!expr) SYNTAX("Expected conditional expression");
+    ast_append(cond, expr);
+    
+    /* expect Then */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_THEN) SYNTAX("Expected Then");
+    
+    /* expect either a block or a newline */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_NEW_LINE)
+    {
+        /* parsing a normal multiline If block */
+        lexer_get(in_parser->lexer);
+        expr = _parse_block(in_parser);
+        if (!expr) return NULL;
+        ast_append(cond, expr);
+        
+        /* expect End, Else or ElseIf */
+        token = lexer_get(in_parser->lexer);
+        if (token.type == TOKEN_END)
+        {
+            token = lexer_peek(in_parser->lexer, 0);
+            if (token.type == TOKEN_IF)
+                lexer_get(in_parser->lexer);
+            token = lexer_get(in_parser->lexer);
+            if (token.type != TOKEN_NEW_LINE)
+                SYNTAX("Expected end of line");
+            return cond;
+        }
+    }
+    else
+    {
+        /* parsing a single line If statement */
+        
+    }
+    
+    return cond;
 }
 
 
@@ -609,9 +659,60 @@ static AstNode* _parse_for(Parser *in_parser)
 
 static AstNode* _parse_block(Parser *in_parser)
 {
+    Token token;
+    AstNode *block, *result;
     
+    /* create a block */
+    block = ast_create(AST_LIST);
     
-    return NULL;
+    for (;;)
+    {
+        /* peek at next token */
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.offset < 0) break;
+        
+        /* handle If...Then...Else block */
+        if (token.type == TOKEN_IF)
+            result = _parse_if(in_parser);
+        
+        /* handle Select Case block */
+        else if (token.type == TOKEN_SELECT)
+            result = _parse_select(in_parser);
+        
+        /* handle While block */
+        else if (token.type == TOKEN_WHILE)
+            result = _parse_while(in_parser);
+        
+        /* handle Do loop */
+        else if (token.type == TOKEN_DO)
+            result = _parse_do(in_parser);
+        
+        /* handle For loop */
+        else if (token.type == TOKEN_FOR)
+            result = _parse_for(in_parser);
+        
+        /* handle #If...#Else block */
+        else if (token.type == TOKEN_HASH_IF)
+            result = _parse_compiler_if(in_parser);
+        
+        /* handle end of block */
+        else if (token.type == TOKEN_END)
+            break;
+        
+        /* handle blank line */
+        else if (token.type == TOKEN_NEW_LINE)
+            continue;
+        
+        /* anything else is assumed to be a statement */
+        else
+            result = _parse_statement(in_parser);
+        
+        /* check whatever we handled was successful */
+        if (!result) return NULL;
+        ast_append(block, result);
+    }
+    
+    return block;
 }
 
 
