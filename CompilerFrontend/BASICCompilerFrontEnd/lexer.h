@@ -15,6 +15,7 @@ typedef struct Lexer Lexer;
 enum LexerTokenType
 {
     TOKEN_UNRECOGNISED,
+    TOKEN_PRAGMA,
     TOKEN_IDENTIFIER,
     TOKEN_SPACE,
     TOKEN_NEW_LINE,
@@ -66,6 +67,8 @@ enum LexerTokenType
     TOKEN_EACH,
     TOKEN_CALL,
     TOKEN_NULL,
+    TOKEN_EXIT,
+    TOKEN_CONTINUE,
     TOKEN_MOD,
     TOKEN_HASH_IF,
     TOKEN_ISA,

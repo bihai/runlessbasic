@@ -1941,8 +1941,8 @@ z5 "cool", (pickle)
 }
 
 ####TEST
-####INPUT			TEST: 52		Call to method with two arguments
-z5 "cool", pickle
+####INPUT			TEST: 52		Call to method with two arguments, one with a keyword embedded
+z5 "cool", ExitBlobs
 
 ####OUTPUT
 <statement> {
@@ -1954,7 +1954,7 @@ z5 "cool", pickle
       }
       <expression> {
         <path> {
-          <string:"pickle">
+          <string:"ExitBlobs">
         }
       }
     }
@@ -1962,5 +1962,25 @@ z5 "cool", pickle
 }
 
 ####TEST
+####INPUT			TEST: 53		Call to method with two arguments, one with a keyword embedded
+z5 "cool", BlobsExit
 
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <string:"cool">
+      }
+      <expression> {
+        <path> {
+          <string:"BlobsExit">
+        }
+      }
+    }
+  }
+}
+
+####TEST
 
