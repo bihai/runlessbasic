@@ -39,6 +39,7 @@ struct Lexer
     int                 buffer_start;
     char                *autofree_list[AUTOFREE_QUEUE];
     int                 autofree_index;
+    long                last_valid_offset;
 };
 
 
@@ -166,6 +167,7 @@ static Lexer* _lexer_create(char *inSource, Boolean enable_lookahead)
     
     outLexer = safe_malloc(sizeof(struct Lexer));
     
+    outLexer->last_valid_offset = 0;
     outLexer->source = inSource;
     outLexer->source_offset = inSource;
     outLexer->last_was_text = False;
@@ -741,6 +743,9 @@ Token lexer_get(Lexer *in_lexer)
     if (in_lexer->buffer_start >= TOKEN_BUFFER_SIZE)
         in_lexer->buffer_start = 0;
     
+    if (token.offset > 0)
+        in_lexer->last_valid_offset = token.offset;
+    
     return token;
 }
 
@@ -756,10 +761,17 @@ Token lexer_peek(Lexer *in_lexer, int in_how_far)
     if (index >= TOKEN_BUFFER_SIZE)
         index -= TOKEN_BUFFER_SIZE;
     
+    if (in_lexer->buffer[index].offset > 0)
+        in_lexer->last_valid_offset = in_lexer->buffer[index].offset;
+    
     return in_lexer->buffer[index];
 }
 
 
+long lexer_offset(Lexer *in_lexer)
+{
+    return in_lexer->last_valid_offset;
+}
 
 
 

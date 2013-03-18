@@ -135,6 +135,7 @@ typedef struct Token
 Lexer* lexer_create(char *inSource);
 Token lexer_get(Lexer *in_lexer);
 Token lexer_peek(Lexer *in_lexer, int in_how_far);
+long lexer_offset(Lexer *in_lexer);
 
 
 #ifdef DEBUG
