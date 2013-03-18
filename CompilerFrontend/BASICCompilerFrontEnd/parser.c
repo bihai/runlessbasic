@@ -27,16 +27,16 @@ struct Parser
 };
 
 
-static AstNode* _error(Parser *in_parser, Token in_token, char *in_message)
+static AstNode* _error(Parser *in_parser, long in_offset, char *in_message)
 {
     if (in_parser->error_message) return NULL;
     in_parser->error_message = in_message;
-    in_parser->error_offset = in_token.offset;
+    in_parser->error_offset = in_offset;
     //abort();
     return NULL;
 }
 
-#define SYNTAX(err) return _error(in_parser, token, err);
+#define SYNTAX(err) return _error(in_parser, lexer_offset(in_parser->lexer), err);
 
 
 static AstNode* _parse_path(Parser *in_parser);
@@ -560,7 +560,7 @@ static AstNode* _parse_block(Parser *in_parser);
 
 static AstNode* _parse_if(Parser *in_parser)
 {
-    Token token;
+    Token token, token2;
     AstNode *cond, *expr;
     
     /* create the If node */
@@ -568,7 +568,7 @@ static AstNode* _parse_if(Parser *in_parser)
     ast_append(cond, ast_create_string("if"));
     
     /* skip the If keyword */
-    lexer_get(in_parser->lexer);
+    token = lexer_get(in_parser->lexer);
     
     /* expect an expression */
     expr = _parse_expression(in_parser);
@@ -585,22 +585,65 @@ static AstNode* _parse_if(Parser *in_parser)
     {
         /* parsing a normal multiline If block */
         lexer_get(in_parser->lexer);
+        
+        /* parse block */
         expr = _parse_block(in_parser);
         if (!expr) return NULL;
         ast_append(cond, expr);
         
-        /* expect End, Else or ElseIf */
-        token = lexer_get(in_parser->lexer);
-        if (token.type == TOKEN_END)
+        /* handle ElseIf */
+        for (;;)
         {
             token = lexer_peek(in_parser->lexer, 0);
-            if (token.type == TOKEN_IF)
+            token2 = lexer_peek(in_parser->lexer, 1);
+            if ((token.type == TOKEN_ELSE) && (token2.type == TOKEN_IF))
+            {
                 lexer_get(in_parser->lexer);
+                lexer_get(in_parser->lexer);
+                
+                /* expect an expression */
+                expr = _parse_expression(in_parser);
+                if (!expr) SYNTAX("Expected conditional expression");
+                ast_append(cond, expr);
+                
+                /* expect Then */
+                token = lexer_get(in_parser->lexer);
+                if (token.type != TOKEN_THEN) SYNTAX("Expected Then");
+                
+                /* parse block */
+                expr = _parse_block(in_parser);
+                if (!expr) return NULL;
+                ast_append(cond, expr);
+            }
+            else break;
+        }
+        
+        /* handle Else */
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_ELSE)
+        {
+            lexer_get(in_parser->lexer);
             token = lexer_get(in_parser->lexer);
             if (token.type != TOKEN_NEW_LINE)
                 SYNTAX("Expected end of line");
-            return cond;
+            
+            /* parse block */
+            expr = _parse_block(in_parser);
+            if (!expr) return NULL;
+            ast_append(cond, expr);
         }
+        
+        /* expect End If */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_END)
+            SYNTAX("Expected End If");
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_IF)
+            lexer_get(in_parser->lexer);
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
+        return cond;
     }
     else
     {
@@ -696,12 +739,15 @@ static AstNode* _parse_block(Parser *in_parser)
             result = _parse_compiler_if(in_parser);
         
         /* handle end of block */
-        else if (token.type == TOKEN_END)
+        else if ((token.type == TOKEN_END) || (token.type == TOKEN_ELSE))
             break;
         
         /* handle blank line */
         else if (token.type == TOKEN_NEW_LINE)
+        {
+            lexer_get(in_parser->lexer);
             continue;
+        }
         
         /* anything else is assumed to be a statement */
         else
@@ -806,6 +852,11 @@ static const char* _test_case_runner(void *in_user, const char *in_file, int in_
     static char err_msg_buffer[1024];
     
     err = NULL;
+    
+//    if (in_case_number == 10) /* debugging breakpoint hook */
+//    {
+//        err = NULL;
+//    }
 
     parser_parse(g_test_parser, (char*)in_input);
     result = NULL;

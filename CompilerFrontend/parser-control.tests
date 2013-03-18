@@ -35,7 +35,272 @@ End If
 }
 
 ####TEST
+####INPUT			TEST: 2
+If x = Gobble.getCount() Then
+	Beep
+Else
+	MsgBox "The wrong gobble count!"
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <path> {
+        <string:"Gobble">
+        <string:"getCount">
+        <list> {
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"The wrong gobble count!">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 3
+If x = Gobble.getCount() Then
+	Beep
+Else If x = 1 Then
+	y = x
+Else
+	MsgBox "The wrong gobble count!"
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <path> {
+        <string:"Gobble">
+        <string:"getCount">
+        <list> {
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"y">
+        }
+        <expression> {
+          <path> {
+            <string:"x">
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"The wrong gobble count!">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 4
+If True Then
+	Beep
+	
+	MsgBox "This is a test."
+
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <boolean:true>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"This is a test.">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 5
+If True Then
+	If False Then
+		MsgBox "This is nonsense!"
+	Else
+		Beep 5
+	End If
+Else
+	MsgBox "As is this!"
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <boolean:true>
+    }
+    <list> {
+      <control> {
+        <string:"if">
+        <expression> {
+          <boolean:false>
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"MsgBox">
+              <list> {
+                <expression> {
+                  <string:"This is nonsense!">
+                }
+              }
+            }
+          }
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"Beep">
+              <list> {
+                <expression> {
+                  <integer:5>
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"As is this!">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 6
+If Then
+	Rem Bad Example!
+End If
+
+####OUTPUT
+3: Expected conditional expression
+####TEST
+####INPUT			TEST: 7
+If 
+	Rem Bad Example!
+End If
+
+####OUTPUT
+3: Expected conditional expression
+####TEST
+####INPUT			TEST: 8
+If x = 1
+	Rem Bad Example!
+End If
+
+####OUTPUT
+8: Expected Then
+####TEST
+####INPUT			TEST: 9
+If x = 1 Then
+
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <integer:1>
+    }
+    <list> {
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 10
+If x = 1 Then
 
 
 
-
+####OUTPUT
+15: Expected End If
+####TEST
