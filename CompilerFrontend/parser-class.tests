@@ -1,0 +1,139 @@
+parser-routine.tests
+RunlessBasic
+Copyright (c) 2013 Joshua Hawcroft <dev@joshhawcroft.com>
+
+
+Routines: Sub and Function
+-------------------------------
+
+####INPUT			TEST: 1			Simple subroutine
+Sub test
+	MsgBox "Hello World!"
+End Sub
+
+####OUTPUT
+<control> {
+  <string:"subroutine">
+  <string:"test">
+  <list> {
+    <statement> {
+      <path> {
+        <string:"MsgBox">
+        <list> {
+          <expression> {
+            <string:"Hello World!">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 2			Simple subroutine with two arguments
+Sub test(inArgA() As Integer, inArgB As Obj)
+	MsgBox "Hello World! " + inArgB
+End Sub
+
+####OUTPUT
+<control> {
+  <string:"subroutine">
+  <string:"test">
+  <list> {
+    <list> {
+      <string:"inArgA">
+      <string:"()">
+      <path> {
+        <string:"Integer">
+      }
+    }
+    <list> {
+      <string:"inArgB">
+      <null>
+      <path> {
+        <string:"Obj">
+      }
+    }
+  }
+  <list> {
+    <statement> {
+      <path> {
+        <string:"MsgBox">
+        <list> {
+          <expression> {
+            <string:"Hello World! ">
+            <operator:add>
+            <path> {
+              <string:"inArgB">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 3			Simple function with one arguments
+Function test(inArgA() As String) As Boolean
+	MsgBox "Hello World! " + inArgA
+	Return True
+End Function
+
+####OUTPUT
+<control> {
+  <string:"function">
+  <string:"test">
+  <list> {
+    <list> {
+      <string:"inArgA">
+      <string:"()">
+      <path> {
+        <string:"String">
+      }
+    }
+  }
+  <path> {
+    <string:"Boolean">
+  }
+  <list> {
+    <statement> {
+      <path> {
+        <string:"MsgBox">
+        <list> {
+          <expression> {
+            <string:"Hello World! ">
+            <operator:add>
+            <path> {
+              <string:"inArgA">
+            }
+          }
+        }
+      }
+    }
+    <statement> {
+      <control> {
+        <string:"return">
+        <expression> {
+          <boolean:true>
+        }
+      }
+    }
+  }
+}
+
+####TEST
+
+
+
+Properties
+----------------
+
+
+
+
+Classes
+----------------------
+
+
+

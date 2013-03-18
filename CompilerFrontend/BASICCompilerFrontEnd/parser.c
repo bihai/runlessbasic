@@ -516,6 +516,35 @@ static AstNode* _parse_redim(Parser *in_parser)
 }
 
 
+static AstNode* _parse_return(Parser *in_parser)
+{
+    Token token;
+    AstNode *ret, *expr;
+    
+    /* create return node */
+    ret = ast_create(AST_CONTROL);
+    ast_append(ret, ast_create_string("return"));
+    
+    /* skip Return */
+    lexer_get(in_parser->lexer);
+    
+    /* handle optional expression */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type != TOKEN_NEW_LINE)
+    {
+        expr = _parse_expression(in_parser);
+        if (!expr) return NULL;
+        ast_append(ret, expr);
+    }
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    return ret;
+}
+
 /* parsing: a single line statement (already determined to not be a control structure)
  line can be blank or must be a valid statement;
  a valid statement can consist of:
@@ -524,8 +553,9 @@ static AstNode* _parse_redim(Parser *in_parser)
  -  a compiler #pragma
  -  control keywords: exit, continue
  -  variable declaration (Dim, Redim)
+ -  return
  */
-/* TODO: Need to implement parsing of Dim statements */
+/* TODO: Need to implement parsing of Return statements */
 static AstNode* _parse_statement(Parser *in_parser)
 {
     Token token;
@@ -582,6 +612,14 @@ static AstNode* _parse_statement(Parser *in_parser)
         token = lexer_peek(in_parser->lexer, 0);
         if ((token.type != TOKEN_NEW_LINE) && (token.type != TOKEN_ELSE))
             SYNTAX("Expected end of line");
+    }
+    
+    /* handle return */
+    else if (token.type == TOKEN_RETURN)
+    {
+        path = _parse_return(in_parser);
+        if (!path) return NULL;
+        ast_append(stmt, path);
     }
     
     /* handle dim */
@@ -1205,11 +1243,128 @@ static AstNode* _parse_block(Parser *in_parser)
 }
 
 
+static AstNode* _parse_routine_arg(Parser *in_parser)
+{
+    Token token;
+    AstNode *arg, *result;
+    
+    /* create an argument */
+    arg = ast_create(AST_LIST);
+    
+    /* expect argument name */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_IDENTIFIER)
+        SYNTAX("Expected argument name");
+    ast_append(arg, ast_create_string(token.text));
+    
+    /* handle array designator () */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_PAREN_LEFT)
+    {
+        lexer_get(in_parser->lexer);
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_PAREN_RIGHT)
+            SYNTAX("Expected )");
+        ast_append(arg, ast_create_string("()"));
+    }
+    else ast_append(arg, ast_create(AST_NULL));
+    
+    /* expect As */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_AS)
+        SYNTAX("Expected As");
+    
+    /* expect argument type path */
+    result = _parse_path(in_parser);
+    if (!result) SYNTAX("Expected argument type");
+    ast_append(arg, result);
+
+    return arg;
+}
+
+
 static AstNode* _parse_routine(Parser *in_parser)
 {
+    Token token, token2;
+    AstNode *routine, *result;
+    Boolean is_function;
     
+    /* create a routine */
+    routine = ast_create(AST_CONTROL);
     
-    return NULL;
+    /* check if Sub or Function and skip keyword */
+    token = lexer_get(in_parser->lexer);
+    is_function = (token.type == TOKEN_FUNCTION);
+    if (!is_function) ast_append(routine, ast_create_string("subroutine"));
+    else ast_append(routine, ast_create_string("function"));
+    
+    /* expect routine name */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_IDENTIFIER)
+    {
+        if (!is_function) {
+            SYNTAX("Expected subroutine name");
+        }
+        else {
+            SYNTAX("Expected function name");
+        }
+    }
+    ast_append(routine, ast_create_string(token.text));
+    
+    /* handle optional argument list */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_PAREN_LEFT)
+    {
+        result = _parse_list(in_parser, _parse_routine_arg, False);
+        if (!result) return NULL;
+        ast_append(routine, result);
+    }
+    
+    if (is_function)
+    {
+        /* expect As */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_AS)
+            SYNTAX("Expected As");
+        
+        /* expect return type */
+        result = _parse_path(in_parser);
+        if (!result) return NULL;
+        ast_append(routine, result);
+    }
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    /* expect block */
+    result = _parse_block(in_parser);
+    if (!result) return NULL;
+    ast_append(routine, result);
+    
+    /* expect End... */
+    token = lexer_get(in_parser->lexer);
+    token2 = lexer_get(in_parser->lexer);
+    if ( (token.type != TOKEN_END) || ((!is_function) && (token2.type != TOKEN_SUB))
+        || ((is_function) && (token2.type != TOKEN_FUNCTION)) )
+    {
+        if (!is_function)
+        {
+            SYNTAX("Expected End Sub");
+        }
+        else
+        {
+            SYNTAX("Expected End Function");
+        }
+    }
+    
+    /* expected end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    return routine;
 }
 
 
@@ -1282,7 +1437,10 @@ static Parser *g_test_parser;
 static void _test_case_result(void *in_user, const char *in_file, int in_case_number, long in_line_number, const char *in_error)
 {
     if (in_error)
+    {
         printf("%s: case %d, line %ld: failed: %s\n", in_file, in_case_number, in_line_number, in_error);
+        exit(1);
+    }
     else
         printf("%s: case %d, line %ld: OK\n", in_file, in_case_number, in_line_number);
 }
@@ -1336,6 +1494,10 @@ void parser_run_tests()
     
     g_test_parser->init = _parse_block;
     test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-control.tests",
+                   _test_case_runner, _test_case_result, NULL);
+    
+    g_test_parser->init = _parse_routine;
+    test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-class.tests",
                    _test_case_runner, _test_case_result, NULL);
 }
 
