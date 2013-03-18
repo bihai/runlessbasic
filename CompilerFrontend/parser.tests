@@ -1596,14 +1596,83 @@ Beep
 }
 
 ####TEST
-####INPUT			TEST: 36		There is stuff ", picle" after the call to z5()
-x = z5((2 - -y) And (bob.theBuilder = "cool")), picle
+####INPUT			TEST: 36		Simple method call with one argument
+Beep(3)
 
 ####OUTPUT
-46: Expected end of line
-####TEST
+<statement> {
+  <path> {
+    <string:"Beep">
+    <list> {
+      <expression> {
+        <integer:3>
+      }
+    }
+  }
+}
 
-####INPUT			TEST: 37		Chain of calls including class constants as arguments
+####TEST
+####INPUT			TEST: 37		Simple method call to a built-in class
+System.Beep
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"Beep">
+  }
+}
+
+####TEST
+####INPUT			TEST: 38		Simple method call to a built-in class, with one argument
+System.Beep(3)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"Beep">
+    <list> {
+      <expression> {
+        <integer:3>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 39		Simple method call to a built-in class, in a mock namespace
+System.UI.Beep
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"UI">
+    <string:"Beep">
+  }
+}
+
+####TEST
+####INPUT			TEST: 40		Chained method call
+System.Process(1).Activate
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"Process">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+    }
+    <string:"Activate">
+  }
+}
+
+####TEST
+####INPUT			TEST: 41		Chain of calls including class constants as arguments
 System.Process(1).Activate(System.Process.Behind, System.Process.Now)
 
 ####OUTPUT
@@ -1630,6 +1699,262 @@ System.Process(1).Activate(System.Process.Behind, System.Process.Now)
           <string:"System">
           <string:"Process">
           <string:"Now">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 42		System method call with a single unbracketed argument
+Console.WriteLine "Hello World!"
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Console">
+    <string:"WriteLine">
+    <list> {
+      <expression> {
+        <string:"Hello World!">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 43		System method call with a single bracketed () argument
+Console.WriteLine("Hello World!")
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Console">
+    <string:"WriteLine">
+    <list> {
+      <expression> {
+        <string:"Hello World!">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 44		Property assignment with a simple expression
+self.DogsAge = 1 * inX + 2
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"DogsAge">
+  }
+  <expression> {
+    <integer:1>
+    <operator:multiply>
+    <path> {
+      <string:"inX">
+    }
+    <operator:add>
+    <integer:2>
+  }
+}
+
+####TEST
+####INPUT			TEST: 45		Property assignment with a simple expression
+self.DogsAge = new Dog("Fido", 3)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"DogsAge">
+  }
+  <expression> {
+    <operator:new>
+    <string:"Dog">
+    <list> {
+      <expression> {
+        <string:"Fido">
+      }
+      <expression> {
+        <integer:3>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 46		Property assignment with a simple chained expression
+self.Dog(3) = inAnimals(16).getDog(14)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"Dog">
+    <list> {
+      <expression> {
+        <integer:3>
+      }
+    }
+  }
+  <expression> {
+    <path> {
+      <string:"inAnimals">
+      <list> {
+        <expression> {
+          <integer:16>
+        }
+      }
+      <string:"getDog">
+      <list> {
+        <expression> {
+          <integer:14>
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 47		There is stuff ", picle" after the call to z5()
+x = z5((2 - -y) And (bob.theBuilder = "cool")), picle
+
+####OUTPUT
+46: Expected end of line
+####TEST
+####INPUT			TEST: 48		Assignment of moderately complex expression to simple variable
+x = z5 ((2 - -y) And (bob.theBuilder = "cool")) + 9
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"x">
+  }
+  <expression> {
+    <path> {
+      <string:"z5">
+      <list> {
+        <expression> {
+          <expression> {
+            <integer:2>
+            <operator:subtract>
+            <expression> {
+              <operator:negate>
+              <path> {
+                <string:"y">
+              }
+            }
+          }
+          <operator:logical-and>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"theBuilder">
+            }
+            <operator:equal>
+            <string:"cool">
+          }
+        }
+      }
+    }
+    <operator:add>
+    <integer:9>
+  }
+}
+
+####TEST
+####INPUT			TEST: 49		Call to method with two arguments and excess parentheses (())
+z5 (("cool") + str(5)), pickle
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <expression> {
+          <string:"cool">
+        }
+        <operator:add>
+        <path> {
+          <string:"str">
+          <list> {
+            <expression> {
+              <integer:5>
+            }
+          }
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"pickle">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 50		Call to method with two arguments and excess parentheses ()
+z5 ("cool"), pickle
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <string:"cool">
+      }
+      <expression> {
+        <path> {
+          <string:"pickle">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 51		Call to method with two arguments and excess parentheses ()
+z5 "cool", (pickle)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <string:"cool">
+      }
+      <expression> {
+        <expression> {
+          <path> {
+            <string:"pickle">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 52		Call to method with two arguments
+z5 "cool", pickle
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <string:"cool">
+      }
+      <expression> {
+        <path> {
+          <string:"pickle">
         }
       }
     }
