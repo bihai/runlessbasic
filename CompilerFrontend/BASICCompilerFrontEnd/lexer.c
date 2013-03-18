@@ -120,6 +120,7 @@ const struct KnownToken known_tokens[] = {
     { "if", TOKEN_IF },
     { "is", TOKEN_IS },
     { "of", TOKEN_OF },
+    { "in", TOKEN_IN },
     { "<>", TOKEN_NOT_EQUAL },
     { "<=", TOKEN_LESS_EQUAL },
     { ">=", TOKEN_MORE_EQUAL },

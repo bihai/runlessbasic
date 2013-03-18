@@ -90,6 +90,7 @@ enum LexerTokenType
     TOKEN_IF,
     TOKEN_IS,
     TOKEN_OF,
+    TOKEN_IN,
     TOKEN_NOT_EQUAL,
     TOKEN_LESS_EQUAL,
     TOKEN_MORE_EQUAL,
