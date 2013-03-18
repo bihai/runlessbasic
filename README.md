@@ -23,10 +23,10 @@ Motivation
 
 	Yes, I know about [REALstudio], [LiveCode], [Gambas], [PureBASIC] and the like, but each of these have significant flaws in my opinion.
 	
-[REALstudio][http://www.realsoftware.com/]
-[LiveCode][http://www.runrev.com/]
-[Gambas][http://gambas.sourceforge.net/]
-[PureBASIC][http://www.purebasic.com/]
+[REALstudio]: http://www.realsoftware.com/
+[LiveCode]: http://www.runrev.com/
+[Gambas]: http://gambas.sourceforge.net/
+[PureBASIC]: http://www.purebasic.com/
 
 
 License
