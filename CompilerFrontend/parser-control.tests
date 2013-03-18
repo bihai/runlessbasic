@@ -1047,4 +1047,227 @@ Next item
 ####OUTPUT
 50: Expected end of line
 ####TEST
+####INPUT			Test: 36		Simple While Loop
+While Count(cats) > Count(Dogs)
+	KillCats()
+Wend
 
+####OUTPUT
+<list> {
+  <control> {
+    <string:"while">
+    <expression> {
+      <path> {
+        <string:"Count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"cats">
+            }
+          }
+        }
+      }
+      <operator:more-than>
+      <path> {
+        <string:"Count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"Dogs">
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"KillCats">
+          <list> {
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 37		Simple While Loop with Exit
+While Count(cats) > Count(Dogs)
+	KillCats()
+	Exit
+Wend
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"while">
+    <expression> {
+      <path> {
+        <string:"Count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"cats">
+            }
+          }
+        }
+      }
+      <operator:more-than>
+      <path> {
+        <string:"Count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"Dogs">
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"KillCats">
+          <list> {
+          }
+        }
+      }
+      <statement> {
+        <string:"break">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 38		Simple While with syntax error
+While Count(cats) >> Count(Dogs)
+	KillCats()
+	Exit
+Wend
+
+####OUTPUT
+19: Expected operand
+####TEST
+####INPUT			Test: 39		Simple While with syntax error
+While 
+	KillCats()
+	Exit
+Wend
+
+####OUTPUT
+6: Expected conditional expression
+####TEST
+####INPUT			Test: 40		Simple While with syntax error
+While true
+	KillCats()
+	Exit
+
+
+####OUTPUT
+29: Expected Wend
+####TEST
+####INPUT			Test: 41		Combination of loops, ifs and selects
+While count(Cats) > 0
+	KillCats()
+	If count(birds) = 0 Then Exit
+	Select Case count(Cats)
+	Case 1
+		MsgBox "Just one left!"
+	Else
+		msg = "Still going..."
+	End Select
+Wend
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"while">
+    <expression> {
+      <path> {
+        <string:"count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"Cats">
+            }
+          }
+        }
+      }
+      <operator:more-than>
+      <integer:0>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"KillCats">
+          <list> {
+          }
+        }
+      }
+      <control> {
+        <string:"if">
+        <expression> {
+          <path> {
+            <string:"count">
+            <list> {
+              <expression> {
+                <path> {
+                  <string:"birds">
+                }
+              }
+            }
+          }
+          <operator:equal>
+          <integer:0>
+        }
+        <statement> {
+          <string:"break">
+        }
+      }
+      <control> {
+        <string:"select">
+        <expression> {
+          <path> {
+            <string:"count">
+            <list> {
+              <expression> {
+                <path> {
+                  <string:"Cats">
+                }
+              }
+            }
+          }
+        }
+        <expression> {
+          <integer:1>
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"MsgBox">
+              <list> {
+                <expression> {
+                  <string:"Just one left!">
+                }
+              }
+            }
+          }
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"msg">
+            }
+            <expression> {
+              <string:"Still going...">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST

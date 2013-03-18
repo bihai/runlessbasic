@@ -769,22 +769,6 @@ static AstNode* _parse_select(Parser *in_parser)
 }
 
 
-static AstNode* _parse_do(Parser *in_parser)
-{
-    
-    
-    return NULL;
-}
-
-
-static AstNode* _parse_while(Parser *in_parser)
-{
-    
-    
-    return NULL;
-}
-
-
 static AstNode* _parse_for(Parser *in_parser)
 {
     Token token;
@@ -919,6 +903,55 @@ static AstNode* _parse_for(Parser *in_parser)
 }
 
 
+static AstNode* _parse_while(Parser *in_parser)
+{
+    Token token;
+    AstNode *cond, *expr;
+    
+    /* create the Select node */
+    cond = ast_create(AST_CONTROL);
+    ast_append(cond, ast_create_string("while"));
+    
+    /* skip the While keyword */
+    lexer_get(in_parser->lexer);
+    
+    /* expect the loop condition */
+    expr = _parse_expression(in_parser);
+    if (!expr) SYNTAX("Expected conditional expression");
+    ast_append(cond, expr);
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    /* expect a block */
+    expr = _parse_block(in_parser);
+    if (!expr) return NULL;
+    ast_append(cond, expr);
+    
+    /* expect Wend */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_WEND)
+        SYNTAX("Expected Wend");
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    return cond;
+}
+
+
+static AstNode* _parse_do(Parser *in_parser)
+{
+    
+    
+    return NULL;
+}
+
+
 static AstNode* _parse_block(Parser *in_parser)
 {
     Token token;
@@ -958,7 +991,9 @@ static AstNode* _parse_block(Parser *in_parser)
             result = _parse_compiler_if(in_parser);
         
         /* handle end of block */
-        else if ((token.type == TOKEN_END) || (token.type == TOKEN_ELSE) || (token.type == TOKEN_CASE) || (token.type == TOKEN_NEXT))
+        else if ((token.type == TOKEN_END) || (token.type == TOKEN_ELSE) ||
+                 (token.type == TOKEN_CASE) || (token.type == TOKEN_NEXT) ||
+                 (token.type == TOKEN_WEND))
             break;
         
         /* handle blank line */
