@@ -30,7 +30,8 @@ typedef enum {
 /*
  AST_STATEMENT:
  
-    Contains only: <path> [<expression>]
+    Contains only: (<path> [<expression>]) | <string:"Continue"> | <string:"Exit"> | 
+        (<string:"Pragma"> <string:<identifier>> <string:<value>>)
  
     If it's just a <path> - it must be executable and not return a value.
     If it includes an <expression>, it should be assigned to the writable property given by <path>.
