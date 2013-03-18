@@ -116,23 +116,33 @@ void ast_append(AstNode *in_parent, AstNode *in_child)
 }
 
 
+static Boolean _has_list(AstNode *in_node)
+{
+    switch (in_node->type)
+    {
+        case AST_EXPRESSION:
+        case AST_LIST:
+        case AST_PATH:
+        case AST_STATEMENT:
+        case AST_CONTROL:
+            return True;
+        default:
+            return False;
+    }
+}
+
+
 static Boolean _ast_walk_int(AstNode *in_node, AstWalker in_walker, int in_level, void *io_user)
 {
     int i;
     if (!in_node) return False;
     if (in_walker(in_node, False, in_level, io_user)) return True;
-    switch (in_node->type)
+    if (_has_list(in_node))
     {
-        case AST_LIST:
-        case AST_PATH:
-        case AST_STATEMENT:
-        case AST_EXPRESSION:
-            for (i = 0; i < in_node->value.list.count; i++)
-            {
-                if (_ast_walk_int(in_node->value.list.nodes[i], in_walker, in_level+1, io_user)) return True;
-            }
-            break;
-        default: break;
+        for (i = 0; i < in_node->value.list.count; i++)
+        {
+            if (_ast_walk_int(in_node->value.list.nodes[i], in_walker, in_level+1, io_user)) return True;
+        }
     }
     if (in_walker(in_node, True, in_level, io_user)) return True;
     return False;
@@ -265,22 +275,6 @@ Boolean ast_debug_walker(AstNode *in_node, Boolean in_end, int in_level, void *i
     text = _ast_node_desc(in_node, in_end, in_level);
     printf("%s", text);
     return False;
-}
-
-
-static Boolean _has_list(AstNode *in_node)
-{
-    switch (in_node->type)
-    {
-        case AST_EXPRESSION:
-        case AST_LIST:
-        case AST_PATH:
-        case AST_STATEMENT:
-        case AST_CONTROL:
-            return True;
-        default:
-            return False;
-    }
 }
 
 
