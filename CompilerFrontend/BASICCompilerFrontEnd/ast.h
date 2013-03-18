@@ -90,6 +90,7 @@ void ast_insert(AstNode *in_node, int in_before, AstNode *in_child);
 void ast_prepend(AstNode *in_node, AstNode *in_child);
 
 Boolean ast_is(AstNode *in_node, AstNodeType in_type);
+Boolean ast_text_is(AstNode *in_node, const char *in_text);
 
 int ast_count(AstNode *in_node);
 

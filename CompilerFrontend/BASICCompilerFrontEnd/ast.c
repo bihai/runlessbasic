@@ -388,6 +388,14 @@ int ast_count(AstNode *in_node)
 }
 
 
+/* TODO: need to fix this to do a case-insensitive comparison on UTF-8 strings;
+ may need an external string library */
+Boolean ast_text_is(AstNode *in_node, const char *in_text)
+{
+    if (in_node->type != AST_STRING) return False;
+    return (strcmp(in_node->value.string, in_text) == 0);
+}
+
 /* TODO: write tests for AST module and include assertions,
   finish sanity checks in functions and decide what level to include */
 
