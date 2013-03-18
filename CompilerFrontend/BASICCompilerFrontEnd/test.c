@@ -70,13 +70,13 @@ const char* test_run_cases(const char *in_filename, TestCaseRunner in_case_runne
             if (len_buffer > 0)
                 output[len_buffer-1] = 0;
             
-            result = in_case_runner(in_user, case_number, input, output);
+            result = in_case_runner(in_user, in_filename, case_number, input, output);
             if (result)
             {
-                in_result_handler(in_user, case_number, line_number, result);
+                in_result_handler(in_user, in_filename, case_number, line_number, result);
                 break;
             }
-            in_result_handler(in_user, case_number, line_number, NULL);
+            in_result_handler(in_user, in_filename, case_number, line_number, NULL);
         }
         else if (buffer)
         {

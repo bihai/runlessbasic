@@ -18,8 +18,8 @@
 #define LINE_STRING STRINGIZE(__LINE__)
 #define CHECK(cond) if (!(cond)) return "Condition not satisfied at line " LINE_STRING;
 
-typedef const char* (*TestCaseRunner)(void *in_user, int in_case_number, const char *in_input, const char *in_output);
-typedef void (*TestCaseResult)(void *in_user, int in_case_number, long in_line_number, const char *in_error);
+typedef const char* (*TestCaseRunner)(void *in_user, const char *in_file, int in_case_number, const char *in_input, const char *in_output);
+typedef void (*TestCaseResult)(void *in_user, const char *in_file, int in_case_number, long in_line_number, const char *in_error);
 const char* test_run_cases(const char *in_filename, TestCaseRunner in_case_runner, TestCaseResult in_result_handler, void *in_user);
 
 #endif
