@@ -463,3 +463,417 @@ End If
 ####TEST
 
 
+
+
+Select Case
+-------------------
+
+####INPUT			TEST: 17		Empty Select Case
+Select Case x
+End Select
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 18		Simple Select Case
+Select Case x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	
+	MsgBox "x is 3"
+End Select
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x  1">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:2>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 2">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:3>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 3">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 19		Simple Select Case with Else
+Select Case x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Else
+	Beep
+End Select
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x  1">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:2>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 2">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:3>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 3">
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 20		Simple Select Case with Case Else
+Select Case x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Case Else
+	Beep
+End Select
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x  1">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:2>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 2">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:3>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 3">
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 21		Simple Select with syntax error
+Select x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Case Else
+	Beep
+End Select
+
+####OUTPUT
+7: Expected Case
+####TEST
+####INPUT			TEST: 22		Simple Select with syntax error
+Select Case
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Case Else
+	Beep
+End Select
+
+####OUTPUT
+11: Expected expression here
+####TEST
+####INPUT			TEST: 23		Simple Select with syntax error
+Select Case x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Case Else
+	Beep
+Case 4
+	Beep
+End Select
+
+####OUTPUT
+100: Expected End Select
+####TEST
+####INPUT			TEST: 24		Simple Select missing End
+Select Case x
+
+
+
+####OUTPUT
+14: Expected End Select
+####TEST
+
+
+
+
+Nesting Ifs and Selects
+---------------------------
+
+####INPUT			TEST: 25		Complicated nesting of Ifs and Selects
+Select Case a
+Case 1
+	If b = 2 Then
+		Select Case c
+		Case "a"
+			Beep
+		Else
+			MsgBox "c is not a"
+		End
+	Else
+		Msgbox("b <> 2")
+	End If
+Case Else
+	If b <> 3 Then Beep
+End 
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"a">
+      }
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <control> {
+        <string:"if">
+        <expression> {
+          <path> {
+            <string:"b">
+          }
+          <operator:equal>
+          <integer:2>
+        }
+        <list> {
+          <control> {
+            <string:"select">
+            <expression> {
+              <path> {
+                <string:"c">
+              }
+            }
+            <expression> {
+              <string:"a">
+            }
+            <list> {
+              <statement> {
+                <path> {
+                  <string:"Beep">
+                }
+              }
+            }
+            <list> {
+              <statement> {
+                <path> {
+                  <string:"MsgBox">
+                  <list> {
+                    <expression> {
+                      <string:"c is not a">
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"Msgbox">
+              <list> {
+                <expression> {
+                  <string:"b <> 2">
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <control> {
+        <string:"if">
+        <expression> {
+          <path> {
+            <string:"b">
+          }
+          <operator:not-equal>
+          <integer:3>
+        }
+        <statement> {
+          <path> {
+            <string:"Beep">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+

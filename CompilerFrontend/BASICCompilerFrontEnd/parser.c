@@ -390,7 +390,6 @@ const char* double_to_string(double in_double)
 }
 
 
-/* TODO: must also parse pragmas here */
 
 /* parsing: a single line statement (already determined to not be a control structure)
  line can be blank or must be a valid statement;
@@ -398,7 +397,7 @@ const char* double_to_string(double in_double)
  -  an assignment x = ...
  -  a call ()
  -  a compiler #pragma
- -  control keywords: break, continue
+ -  control keywords: exit, continue
  */
 static AstNode* _parse_statement(Parser *in_parser)
 {
@@ -645,7 +644,6 @@ static AstNode* _parse_if(Parser *in_parser)
         token = lexer_get(in_parser->lexer);
         if (token.type != TOKEN_NEW_LINE)
             SYNTAX("Expected end of line");
-        return cond;
     }
     else
     {
@@ -676,7 +674,8 @@ static AstNode* _parse_if(Parser *in_parser)
 
 static AstNode* _parse_compiler_if(Parser *in_parser)
 {
-    
+    /* TODO: implement this later - we don't need it right away;
+     and not for an early version of the completed compiler front-end */
     
     return NULL;
 }
@@ -684,9 +683,81 @@ static AstNode* _parse_compiler_if(Parser *in_parser)
 
 static AstNode* _parse_select(Parser *in_parser)
 {
+    Token token;
+    AstNode *cond, *expr;
     
+    /* create the Select node */
+    cond = ast_create(AST_CONTROL);
+    ast_append(cond, ast_create_string("select"));
     
-    return NULL;
+    /* skip the Select Case keywords */
+    lexer_get(in_parser->lexer);
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_CASE)
+        SYNTAX("Expected Case");
+    
+    /* expect an expression */
+    expr = _parse_expression(in_parser);
+    if (!expr) SYNTAX("Expected expression here");
+    ast_append(cond, expr);
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    /* handle Cases */
+    for (;;)
+    {
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_CASE)
+        {
+            lexer_get(in_parser->lexer);
+            
+            /* handle Case Else */
+            token = lexer_peek(in_parser->lexer, 0);
+            if (token.type == TOKEN_ELSE) break;
+            
+            /* expect an expression */
+            expr = _parse_expression(in_parser);
+            if (!expr) SYNTAX("Expected case expression");
+            ast_append(cond, expr);
+            
+            /* expect end of line */
+            token = lexer_get(in_parser->lexer);
+            if (token.type != TOKEN_NEW_LINE) SYNTAX("Expected end of line");
+            
+            /* parse block */
+            expr = _parse_block(in_parser);
+            if (!expr) return NULL;
+            ast_append(cond, expr);
+        }
+        else break;
+    }
+    
+    /* handle Else */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_ELSE)
+    {
+        lexer_get(in_parser->lexer);
+        
+        /* parse block */
+        expr = _parse_block(in_parser);
+        if (!expr) return NULL;
+        ast_append(cond, expr);
+    }
+    
+    /* expect End Select */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_END)
+        SYNTAX("Expected End Select");
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_SELECT)
+        lexer_get(in_parser->lexer);
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    return cond;
 }
 
 
@@ -713,11 +784,6 @@ static AstNode* _parse_for(Parser *in_parser)
     return NULL;
 }
 
-
-
-/* parsing # compiler conditionals must occur in blocks too;
- and thus will probably have to occur at each level where they're valid,
- ie. inside any _parse_block() */
 
 static AstNode* _parse_block(Parser *in_parser)
 {
@@ -758,7 +824,7 @@ static AstNode* _parse_block(Parser *in_parser)
             result = _parse_compiler_if(in_parser);
         
         /* handle end of block */
-        else if ((token.type == TOKEN_END) || (token.type == TOKEN_ELSE))
+        else if ((token.type == TOKEN_END) || (token.type == TOKEN_ELSE) || (token.type == TOKEN_CASE))
             break;
         
         /* handle blank line */
