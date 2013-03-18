@@ -1,0 +1,377 @@
+parser-routine.tests
+RunlessBasic
+Copyright (c) 2013 Joshua Hawcroft <dev@joshhawcroft.com>
+
+
+####INPUT			TEST: 1			Simple class
+Class CSimple
+
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CSimple">
+  }
+}
+
+####TEST
+####INPUT			TEST: 2			Simple class with one method
+Class CSimple
+	Public Sub test
+		MsgBox "Hello World!"
+	End Sub
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CSimple">
+    <control> {
+      <string:"subroutine">
+      <string:"test">
+      <string:"public">
+      <string:"instance">
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <string:"Hello World!">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 3			Simple class with one property
+Class CSimple
+	Protected pHouses As Integer
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CSimple">
+    <control> {
+      <string:"property">
+      <string:"pHouses">
+      <string:"protected">
+      <string:"instance">
+      <path> {
+        <string:"Integer">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 4			Complex class with simple methods
+Class CSimple Inherits Object Implements Test, System.Boogie
+
+	Public Sub Boogie(inMessage As String)
+		MsgBox inMessage
+	End Sub
+	
+	Public Sub Test
+		MsgBox "Hello World!"
+	End Sub
+	
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CSimple">
+    <path> {
+      <string:"Object">
+    }
+    <list> {
+      <path> {
+        <string:"Test">
+      }
+      <path> {
+        <string:"System">
+        <string:"Boogie">
+      }
+    }
+    <control> {
+      <string:"subroutine">
+      <string:"Boogie">
+      <string:"public">
+      <string:"instance">
+      <list> {
+        <list> {
+          <string:"inMessage">
+          <null>
+          <path> {
+            <string:"String">
+          }
+        }
+      }
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <path> {
+                  <string:"inMessage">
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    <control> {
+      <string:"subroutine">
+      <string:"Test">
+      <string:"public">
+      <string:"instance">
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <string:"Hello World!">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 5			Complex class with syntax error
+Class CSimple Inherits
+	Protected pHouses As Integer
+End Class
+
+####OUTPUT
+22: Expected class identifier
+####TEST
+####INPUT			TEST: 6			Complex class with syntax error
+Class CSimple Implements
+	Protected pHouses As Integer
+End Class
+
+####OUTPUT
+24: Expected class identifier
+####TEST
+####INPUT			TEST: 7			Complex class with syntax error
+Class CSimple Implements Tester Inherits Object
+	Protected pHouses As Integer
+End Class
+
+####OUTPUT
+32: Expected end of line
+####TEST
+####INPUT			TEST: 8			Class with different types of property
+Class CSimple
+	Protected pHouses As Integer
+	Private Shared pStaticProp As Lang.Dictionary
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CSimple">
+    <control> {
+      <string:"property">
+      <string:"pHouses">
+      <string:"protected">
+      <string:"instance">
+      <path> {
+        <string:"Integer">
+      }
+    }
+    <control> {
+      <string:"property">
+      <string:"pStaticProp">
+      <string:"private">
+      <string:"class">
+      <path> {
+        <string:"Lang">
+        <string:"Dictionary">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 9			Class with different types of function/subroutine
+Class CSimple
+
+	Public Shared Function GetCount() As Lang.Integer
+		Return 5
+	End Function
+	
+	Public Sub Start
+		MsgBox "Started!"
+	End Sub
+	
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CSimple">
+    <control> {
+      <string:"function">
+      <string:"GetCount">
+      <string:"public">
+      <string:"class">
+      <list> {
+      }
+      <path> {
+        <string:"Lang">
+        <string:"Integer">
+      }
+      <list> {
+        <statement> {
+          <control> {
+            <string:"return">
+            <expression> {
+              <integer:5>
+            }
+          }
+        }
+      }
+    }
+    <control> {
+      <string:"subroutine">
+      <string:"Start">
+      <string:"public">
+      <string:"instance">
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <string:"Started!">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 10			Simple subroutine
+Class CSimple
+	Public Sub test
+		MsgBox "Hello World!"
+	End Sub
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CSimple">
+    <control> {
+      <string:"subroutine">
+      <string:"test">
+      <string:"public">
+      <string:"instance">
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <string:"Hello World!">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 11		Simple subroutine with two arguments
+Class CSimple
+	Public Sub test(inArgA() As Integer, inArgB As Obj)
+		MsgBox "Hello World! " + inArgB
+	End Sub
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CSimple">
+    <control> {
+      <string:"subroutine">
+      <string:"test">
+      <string:"public">
+      <string:"instance">
+      <list> {
+        <list> {
+          <string:"inArgA">
+          <string:"()">
+          <path> {
+            <string:"Integer">
+          }
+        }
+        <list> {
+          <string:"inArgB">
+          <null>
+          <path> {
+            <string:"Obj">
+          }
+        }
+      }
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <string:"Hello World! ">
+                <operator:add>
+                <path> {
+                  <string:"inArgB">
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 12		Simple subroutine with syntax error
+Class CSimple
+	Sub test(inArgA() As Integer, inArgB As Obj)
+		MsgBox "Hello World! " + inArgB
+	End Sub
+End Class
+
+####OUTPUT
+15: Expected access specifier
+####TEST
+
+

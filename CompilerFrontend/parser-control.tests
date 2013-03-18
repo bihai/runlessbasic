@@ -1,0 +1,1364 @@
+parser-control.tests
+RunlessBasic
+Copyright (c) 2013 Joshua Hawcroft <dev@joshhawcroft.com>
+
+
+If...Else...
+----------------
+
+
+####INPUT			TEST: 1			Basic If
+If x = Gobble.getCount() Then
+	Beep
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <path> {
+        <string:"Gobble">
+        <string:"getCount">
+        <list> {
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 2			If... Else...
+If x = Gobble.getCount() Then
+	Beep
+Else
+	MsgBox "The wrong gobble count!"
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <path> {
+        <string:"Gobble">
+        <string:"getCount">
+        <list> {
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"The wrong gobble count!">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 3			If...Else If...Else...
+If x = Gobble.getCount() Then
+	Beep
+Else If x = 1 Then
+	y = x
+Else
+	MsgBox "The wrong gobble count!"
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <path> {
+        <string:"Gobble">
+        <string:"getCount">
+        <list> {
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"y">
+        }
+        <expression> {
+          <path> {
+            <string:"x">
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"The wrong gobble count!">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 4			If with multi-line block and blank lines
+If True Then
+	Beep
+	
+	MsgBox "This is a test."
+
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <boolean:true>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"This is a test.">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 5			If...Else with nesting
+If True Then
+	If False Then
+		MsgBox "This is nonsense!"
+	Else
+		Beep 5
+	End If
+Else
+	MsgBox "As is this!"
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <boolean:true>
+    }
+    <list> {
+      <control> {
+        <string:"if">
+        <expression> {
+          <boolean:false>
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"MsgBox">
+              <list> {
+                <expression> {
+                  <string:"This is nonsense!">
+                }
+              }
+            }
+          }
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"Beep">
+              <list> {
+                <expression> {
+                  <integer:5>
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"As is this!">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 6			If missing expression
+If Then
+	Rem Bad Example!
+End If
+
+####OUTPUT
+3: Expected conditional expression
+####TEST
+####INPUT			TEST: 7			If missing expression
+If 
+	Rem Bad Example!
+End If
+
+####OUTPUT
+3: Expected conditional expression
+####TEST
+####INPUT			TEST: 8			If missing Then
+If x = 1
+	Rem Bad Example!
+End If
+
+####OUTPUT
+8: Expected Then
+####TEST
+####INPUT			TEST: 9			Empty If block
+If x = 1 Then
+
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <integer:1>
+    }
+    <list> {
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 10		If missing End If
+If x = 1 Then
+
+
+
+####OUTPUT
+15: Expected End If
+####TEST
+####INPUT			TEST: 11		Single line If
+If x = 1 Then Beep
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <integer:1>
+    }
+    <statement> {
+      <path> {
+        <string:"Beep">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 12		Single line If with Else
+If x = 1 Then MsgBox "x is 1" Else MsgBox "x is NOT 1!"
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:equal>
+      <integer:1>
+    }
+    <statement> {
+      <path> {
+        <string:"MsgBox">
+        <list> {
+          <expression> {
+            <string:"x is 1">
+          }
+        }
+      }
+    }
+    <statement> {
+      <path> {
+        <string:"MsgBox">
+        <list> {
+          <expression> {
+            <string:"x is NOT 1!">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 13		Single line If with missing statement
+If x = 1 Then 
+
+####OUTPUT
+14: Expected End If
+####TEST
+####INPUT			TEST: 14		Single line If..Else with missing statement
+If x = 1 Then Beep Else
+
+####OUTPUT
+23: Expected end of line
+####TEST
+####INPUT			TEST: 15		If with complex conditional expressions
+If "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")) <> "Bob" Then
+	MsgBox "You stuffed up!"
+End If
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"if">
+    <expression> {
+      <string:"The answer is ">
+      <operator:add>
+      <path> {
+        <string:"Str">
+        <list> {
+          <expression> {
+            <integer:42>
+            <operator:add>
+            <expression> {
+              <integer:0>
+              <operator:multiply>
+              <path> {
+                <string:"anotherLocal">
+              }
+            }
+          }
+        }
+      }
+      <operator:add>
+      <expression> {
+        <string:".">
+        <operator:add>
+        <expression> {
+          <string:" ">
+        }
+      }
+      <operator:add>
+      <path> {
+        <string:"Str">
+        <list> {
+          <expression> {
+            <operator:logical-not>
+            <expression> {
+              <path> {
+                <string:"bob">
+                <string:"type">
+              }
+              <operator:equal>
+              <string:"builder">
+            }
+          }
+        }
+      }
+      <operator:not-equal>
+      <string:"Bob">
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"You stuffed up!">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 16		If with a syntax error
+If If i = 1 Then
+	MsgBox "You stuffed up!"
+End If
+
+####OUTPUT
+3: Expected conditional expression
+####TEST
+
+
+
+
+Select Case
+-------------------
+
+####INPUT			TEST: 17		Empty Select Case
+Select Case x
+End Select
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 18		Simple Select Case
+Select Case x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	
+	MsgBox "x is 3"
+End Select
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x  1">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:2>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 2">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:3>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 3">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 19		Simple Select Case with Else
+Select Case x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Else
+	Beep
+End Select
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x  1">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:2>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 2">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:3>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 3">
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 20		Simple Select Case with Case Else
+Select Case x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Case Else
+	Beep
+End Select
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x  1">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:2>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 2">
+            }
+          }
+        }
+      }
+    }
+    <expression> {
+      <integer:3>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <string:"x is 3">
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 21		Simple Select with syntax error
+Select x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Case Else
+	Beep
+End Select
+
+####OUTPUT
+7: Expected Case
+####TEST
+####INPUT			TEST: 22		Simple Select with syntax error
+Select Case
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Case Else
+	Beep
+End Select
+
+####OUTPUT
+11: Expected expression here
+####TEST
+####INPUT			TEST: 23		Simple Select with syntax error
+Select Case x
+Case 1
+	MsgBox "x  1"
+Case 2
+	MsgBox "x is 2"
+Case 3
+	MsgBox "x is 3"
+Case Else
+	Beep
+Case 4
+	Beep
+End Select
+
+####OUTPUT
+100: Expected End Select
+####TEST
+####INPUT			TEST: 24		Simple Select missing End
+Select Case x
+
+
+
+####OUTPUT
+14: Expected End Select
+####TEST
+
+
+
+
+Nesting Ifs and Selects
+---------------------------
+
+####INPUT			TEST: 25		Complicated nesting of Ifs and Selects
+Select Case a
+Case 1
+	If b = 2 Then
+		Select Case c
+		Case "a"
+			Beep
+		Else
+			MsgBox "c is not a"
+		End
+	Else
+		Msgbox("b <> 2")
+	End If
+Case Else
+	If b <> 3 Then Beep
+End 
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"select">
+    <expression> {
+      <path> {
+        <string:"a">
+      }
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <control> {
+        <string:"if">
+        <expression> {
+          <path> {
+            <string:"b">
+          }
+          <operator:equal>
+          <integer:2>
+        }
+        <list> {
+          <control> {
+            <string:"select">
+            <expression> {
+              <path> {
+                <string:"c">
+              }
+            }
+            <expression> {
+              <string:"a">
+            }
+            <list> {
+              <statement> {
+                <path> {
+                  <string:"Beep">
+                }
+              }
+            }
+            <list> {
+              <statement> {
+                <path> {
+                  <string:"MsgBox">
+                  <list> {
+                    <expression> {
+                      <string:"c is not a">
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"Msgbox">
+              <list> {
+                <expression> {
+                  <string:"b <> 2">
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <control> {
+        <string:"if">
+        <expression> {
+          <path> {
+            <string:"b">
+          }
+          <operator:not-equal>
+          <integer:3>
+        }
+        <statement> {
+          <path> {
+            <string:"Beep">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+
+
+
+For & For Each loops
+-------------------------
+
+####INPUT			Test: 26		Simple For loop
+For x = 1 To 3
+	Beep
+Next x
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"for">
+    <string:"x">
+    <expression> {
+      <integer:1>
+    }
+    <string:"increment">
+    <expression> {
+      <integer:3>
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 27		Complicated For loop
+For i = Proxy.GetCount() DownTo 0 Step 2
+	Proxy.Bob i
+Next i
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"for">
+    <string:"i">
+    <expression> {
+      <path> {
+        <string:"Proxy">
+        <string:"GetCount">
+        <list> {
+        }
+      }
+    }
+    <string:"decrement">
+    <expression> {
+      <integer:0>
+    }
+    <expression> {
+      <integer:2>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Proxy">
+          <string:"Bob">
+          <list> {
+            <expression> {
+              <path> {
+                <string:"i">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 28		For loop with invalid closing identifier
+For i = Proxy.GetCount() DownTo 0 Step 2
+	Proxy.Bob i
+Next x
+
+####OUTPUT
+59: Counter variable must match For
+####TEST
+####INPUT			Test: 29		For loop with bad syntax
+For self.i = Proxy.GetCount() DownTo 0 Step 2
+	Proxy.Bob i
+Next x
+
+####OUTPUT
+4: Expected identifier
+####TEST
+####INPUT			Test: 30		For loop with bad syntax
+For bob.i = Proxy.GetCount() DownTo 0 Step 2
+	Proxy.Bob i
+Next x
+
+####OUTPUT
+7: Expected =
+####TEST
+####INPUT			Test: 31		For loop with bad syntax
+For i = 1 To 10 Step a.
+	Proxy.Bob i
+Next
+
+####OUTPUT
+23: Expected identifier
+####TEST
+####INPUT			Test: 32		Simple For Each loop
+For Each item In groceries
+	MsgBox item.name
+Next
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"foreach">
+    <string:"item">
+    <expression> {
+      <path> {
+        <string:"groceries">
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"MsgBox">
+          <list> {
+            <expression> {
+              <path> {
+                <string:"item">
+                <string:"name">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 33		For each with syntax errors
+For Eah item In groceries
+	MsgBox item.name
+Next
+
+####OUTPUT
+8: Expected =
+####TEST
+####INPUT			Test: 34		For each with syntax errors
+For Each self.item In groceries
+	MsgBox item.name
+Next
+
+####OUTPUT
+9: Expected identifier
+####TEST
+####INPUT			Test: 35		For each with syntax errors
+For Each item In groceries
+	MsgBox item.name
+Next item
+
+####OUTPUT
+50: Expected end of line
+####TEST
+####INPUT			Test: 36		Simple While Loop
+While Count(cats) > Count(Dogs)
+	KillCats()
+Wend
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"while">
+    <expression> {
+      <path> {
+        <string:"Count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"cats">
+            }
+          }
+        }
+      }
+      <operator:more-than>
+      <path> {
+        <string:"Count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"Dogs">
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"KillCats">
+          <list> {
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 37		Simple While Loop with Exit
+While Count(cats) > Count(Dogs)
+	KillCats()
+	Exit
+Wend
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"while">
+    <expression> {
+      <path> {
+        <string:"Count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"cats">
+            }
+          }
+        }
+      }
+      <operator:more-than>
+      <path> {
+        <string:"Count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"Dogs">
+            }
+          }
+        }
+      }
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"KillCats">
+          <list> {
+          }
+        }
+      }
+      <statement> {
+        <string:"break">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 38		Simple While with syntax error
+While Count(cats) >> Count(Dogs)
+	KillCats()
+	Exit
+Wend
+
+####OUTPUT
+19: Expected operand
+####TEST
+####INPUT			Test: 39		Simple While with syntax error
+While 
+	KillCats()
+	Exit
+Wend
+
+####OUTPUT
+6: Expected conditional expression
+####TEST
+####INPUT			Test: 40		Simple While with syntax error
+While true
+	KillCats()
+	Exit
+
+
+####OUTPUT
+29: Expected Wend
+####TEST
+####INPUT			Test: 41		Combination of loops, ifs and selects
+While count(Cats) > 0
+	KillCats()
+	If count(birds) = 0 Then Exit
+	Select Case count(Cats)
+	Case 1
+		MsgBox "Just one left!"
+	Else
+		msg = "Still going..."
+	End Select
+Wend
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"while">
+    <expression> {
+      <path> {
+        <string:"count">
+        <list> {
+          <expression> {
+            <path> {
+              <string:"Cats">
+            }
+          }
+        }
+      }
+      <operator:more-than>
+      <integer:0>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"KillCats">
+          <list> {
+          }
+        }
+      }
+      <control> {
+        <string:"if">
+        <expression> {
+          <path> {
+            <string:"count">
+            <list> {
+              <expression> {
+                <path> {
+                  <string:"birds">
+                }
+              }
+            }
+          }
+          <operator:equal>
+          <integer:0>
+        }
+        <statement> {
+          <string:"break">
+        }
+      }
+      <control> {
+        <string:"select">
+        <expression> {
+          <path> {
+            <string:"count">
+            <list> {
+              <expression> {
+                <path> {
+                  <string:"Cats">
+                }
+              }
+            }
+          }
+        }
+        <expression> {
+          <integer:1>
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"MsgBox">
+              <list> {
+                <expression> {
+                  <string:"Just one left!">
+                }
+              }
+            }
+          }
+        }
+        <list> {
+          <statement> {
+            <path> {
+              <string:"msg">
+            }
+            <expression> {
+              <string:"Still going...">
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 42		Simple Do loop
+Do Until x - y < 5
+	Beep
+Loop
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"do">
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:subtract>
+      <path> {
+        <string:"y">
+      }
+      <operator:less-than>
+      <integer:5>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 43		Simple Do loop
+Do
+	Beep
+Loop Until x - y < 5
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"do">
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+    <expression> {
+      <path> {
+        <string:"x">
+      }
+      <operator:subtract>
+      <path> {
+        <string:"y">
+      }
+      <operator:less-than>
+      <integer:5>
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 44		Endless Do loop
+Do
+	Beep
+Loop
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"do">
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 45		Do with syntax error
+Do
+	Beep
+Next
+
+####OUTPUT
+9: Expected Loop
+####TEST
+

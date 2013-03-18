@@ -39,6 +39,7 @@ struct Lexer
     int                 buffer_start;
     char                *autofree_list[AUTOFREE_QUEUE];
     int                 autofree_index;
+    long                last_valid_offset;
 };
 
 
@@ -55,12 +56,14 @@ const struct KnownToken known_tokens[] = {
     { "protected", TOKEN_PROTECTED },
     { "inherits", TOKEN_INHERITS },
     { "function", TOKEN_FUNCTION },
+    { "continue", TOKEN_CONTINUE },
     { "private", TOKEN_PRIVATE },
     { "declare", TOKEN_DECLARE },
     { "finally", TOKEN_FINALLY },
     { "inlinec", TOKEN_INLINEC },
     { "handles", TOKEN_HANDLES },
-    { "object", TOKEN_OBJECT },
+    { "#pragma", TOKEN_PRAGMA },
+    /*{ "object", TOKEN_OBJECT },*/
     { "static", TOKEN_STATIC },
     { "shared", TOKEN_SHARED },
     { "public", TOKEN_PUBLIC },
@@ -84,6 +87,7 @@ const struct KnownToken known_tokens[] = {
     { "const", TOKEN_CONST },
     { "step", TOKEN_STEP },
     { "loop", TOKEN_LOOP },
+    { "exit", TOKEN_EXIT },
     { "then", TOKEN_THEN },
     { "case", TOKEN_CASE },
     { "wend", TOKEN_WEND },
@@ -116,6 +120,7 @@ const struct KnownToken known_tokens[] = {
     { "if", TOKEN_IF },
     { "is", TOKEN_IS },
     { "of", TOKEN_OF },
+    { "in", TOKEN_IN },
     { "<>", TOKEN_NOT_EQUAL },
     { "<=", TOKEN_LESS_EQUAL },
     { ">=", TOKEN_MORE_EQUAL },
@@ -163,6 +168,7 @@ static Lexer* _lexer_create(char *inSource, Boolean enable_lookahead)
     
     outLexer = safe_malloc(sizeof(struct Lexer));
     
+    outLexer->last_valid_offset = 0;
     outLexer->source = inSource;
     outLexer->source_offset = inSource;
     outLexer->last_was_text = False;
@@ -416,7 +422,7 @@ static Token _lexer_get_token(Lexer *inLexer)
             
             if (! (is_text_token && (inLexer->last_was_text || (inLexer->source_offset != source_start))) )
             {
-            
+                /* compare characters of known token and input text */
                 for (c = 0; (
                              (c < len_token) &&
                              (inLexer->source_offset[c] != 0) &&
@@ -425,7 +431,7 @@ static Token _lexer_get_token(Lexer *inLexer)
                 {
                     if ( (c+1 == len_token) &&
                         (
-                            ( is_text_token && (!isalpha(inLexer->source_offset[c+1])) ) ||
+                            ( is_text_token && (!isalnum(inLexer->source_offset[c+1])) ) ||
                             (! is_text_token)
                         ) )
                     {
@@ -692,11 +698,12 @@ static void _lexer_fill_buffer(Lexer *in_lexer)
     }
     
     in_lexer->buffer_start = 0;
-    i = 0;
-    for (token = _lexer_get_next_token(in_lexer);
-         ((token.offset >= 0) && (i < TOKEN_BUFFER_SIZE));
-         token = _lexer_get_next_token(in_lexer))
-        in_lexer->buffer[ i++ ] = token;
+    for (i = 0; i < TOKEN_BUFFER_SIZE; i++)
+    {
+        token = _lexer_get_next_token(in_lexer);
+        if (token.offset < 0) break;
+        in_lexer->buffer[i] = token;
+    }
 }
 
 
@@ -737,6 +744,9 @@ Token lexer_get(Lexer *in_lexer)
     if (in_lexer->buffer_start >= TOKEN_BUFFER_SIZE)
         in_lexer->buffer_start = 0;
     
+    if (token.offset > 0)
+        in_lexer->last_valid_offset = token.offset;
+    
     return token;
 }
 
@@ -752,10 +762,17 @@ Token lexer_peek(Lexer *in_lexer, int in_how_far)
     if (index >= TOKEN_BUFFER_SIZE)
         index -= TOKEN_BUFFER_SIZE;
     
+    if (in_lexer->buffer[index].offset > 0)
+        in_lexer->last_valid_offset = in_lexer->buffer[index].offset;
+    
     return in_lexer->buffer[index];
 }
 
 
+long lexer_offset(Lexer *in_lexer)
+{
+    return in_lexer->last_valid_offset;
+}
 
 
 
@@ -1253,7 +1270,7 @@ static const char* test_11(void)
     
     lexer = _lexer_create("DiM name // this is comment\r\n"
                          "name = \"Hello &u0022cruel\"\" world!\"\r"
-                         "cOnsT3.14159\n"
+                         "cOnsT 3.14159\n"
                          "&b1001ANd\t 私はガラ=\"pickle 食べ\"eND", False);
     CHECK(lexer);
     token = _lexer_get_token(lexer);
@@ -1328,6 +1345,8 @@ static const char* test_11(void)
     
     token = _lexer_get_token(lexer);
     CHECK(token.type == TOKEN_CONST);
+    token = _lexer_get_token(lexer);
+    CHECK(token.type == TOKEN_SPACE);
     token = _lexer_get_token(lexer);
     CHECK(token.type == TOKEN_UNRECOGNISED);
     CHECK(token.text);
@@ -1772,10 +1791,32 @@ static const char* test_19()
     token = lexer_peek(lexer, 5);
     CHECK(token.type == TOKEN_IDENTIFIER);
     
+    
+    lexer = lexer_create("Namespace1.Class1.MethodA");
+    CHECK(lexer);
+    token = lexer_peek(lexer, 0);
+    CHECK(token.type == TOKEN_IDENTIFIER);
+    token = lexer_peek(lexer, 1);
+    CHECK(token.type == TOKEN_DOT);
+    token = lexer_peek(lexer, 2);
+    CHECK(token.type == TOKEN_IDENTIFIER);
+    token = lexer_peek(lexer, 3);
+    CHECK(token.type == TOKEN_DOT);
+    token = lexer_peek(lexer, 4);
+    CHECK(token.type == TOKEN_IDENTIFIER);
+    
+    
     return NULL;
 }
 
 
+/* TODO: I fixed a bug which I found by running this through the lexer:
+    "self.Dog(7) = new Dog(\"Fido\", 3)\r\n"
+   The initial loading loop was filling the buffer incorrectly and dropping "Fido"
+   from the token stream.
+ 
+   Suggest adding a test case.
+ */
 
 void lexer_run_tests(void)
 {

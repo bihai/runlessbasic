@@ -1,0 +1,2281 @@
+parser-statement.tests
+RunlessBasic
+Copyright (c) 2013 Joshua Hawcroft <dev@joshhawcroft.com>
+
+
+Successful Parse Cases
+-------------------------------
+
+
+####INPUT			TEST: 1
+Super.MethodA
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+  }
+}
+
+####TEST
+####INPUT			TEST: 2
+Super.MethodA(1, 2)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+      <expression> {
+        <integer:2>
+      }
+    }
+  }
+}
+
+####TEST
+
+
+####INPUT			TEST: 3
+Super.MethodA 1, 2
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+      <expression> {
+        <integer:2>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 4
+Super.MethodA "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 5
+Super.MethodA "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")), Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"Format">
+          <list> {
+            <expression> {
+              <expression> {
+                <operator:negate>
+                <path> {
+                  <string:"x">
+                }
+              }
+              <operator:add>
+              <expression> {
+                <path> {
+                  <string:"y">
+                }
+                <operator:subtract>
+                <expression> {
+                  <operator:negate>
+                  <path> {
+                    <string:"z">
+                  }
+                }
+              }
+            }
+            <expression> {
+              <string:"-0.00">
+            }
+          }
+        }
+        <operator:add>
+        <string:" ">
+        <operator:add>
+        <path> {
+          <string:"pancakes">
+          <list> {
+            <expression> {
+              <integer:0>
+            }
+          }
+          <string:"GetTitle">
+          <list> {
+            <expression> {
+              <string:"alpha">
+            }
+            <expression> {
+              <string:"beta">
+            }
+            <expression> {
+              <path> {
+                <string:"petunias">
+                <string:"getCount">
+                <list> {
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 6
+Super.MethodA("The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")), Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"super">
+    <string:"MethodA">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"Format">
+          <list> {
+            <expression> {
+              <expression> {
+                <operator:negate>
+                <path> {
+                  <string:"x">
+                }
+              }
+              <operator:add>
+              <expression> {
+                <path> {
+                  <string:"y">
+                }
+                <operator:subtract>
+                <expression> {
+                  <operator:negate>
+                  <path> {
+                    <string:"z">
+                  }
+                }
+              }
+            }
+            <expression> {
+              <string:"-0.00">
+            }
+          }
+        }
+        <operator:add>
+        <string:" ">
+        <operator:add>
+        <path> {
+          <string:"pancakes">
+          <list> {
+            <expression> {
+              <integer:0>
+            }
+          }
+          <string:"GetTitle">
+          <list> {
+            <expression> {
+              <string:"alpha">
+            }
+            <expression> {
+              <string:"beta">
+            }
+            <expression> {
+              <path> {
+                <string:"petunias">
+                <string:"getCount">
+                <list> {
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 7
+Self.MethodA
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"MethodA">
+  }
+}
+
+####TEST
+####INPUT			TEST: 8
+MethodA
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"MethodA">
+  }
+}
+
+####TEST
+####INPUT			TEST: 9
+Namespace1.Class1.MethodA
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Namespace1">
+    <string:"Class1">
+    <string:"MethodA">
+  }
+}
+
+####TEST 
+####INPUT			TEST: 10
+Class1.MethodA
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Class1">
+    <string:"MethodA">
+  }
+}
+
+####TEST
+####INPUT			TEST: 11
+LocalArray("The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))).Method 42
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"LocalArray">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+    }
+    <string:"Method">
+    <list> {
+      <expression> {
+        <integer:42>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 12
+LocalArray("The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))).Method(42)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"LocalArray">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+    }
+    <string:"Method">
+    <list> {
+      <expression> {
+        <integer:42>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 13
+LocalArray("The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))).Method(40, 2)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"LocalArray">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+    }
+    <string:"Method">
+    <list> {
+      <expression> {
+        <integer:40>
+      }
+      <expression> {
+        <integer:2>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 14
+LocalArray(Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())).Method "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")), Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()), 83
+
+####OUTPUT 
+<statement> {
+  <path> {
+    <string:"LocalArray">
+    <list> {
+      <expression> {
+        <path> {
+          <string:"Format">
+          <list> {
+            <expression> {
+              <expression> {
+                <operator:negate>
+                <path> {
+                  <string:"x">
+                }
+              }
+              <operator:add>
+              <expression> {
+                <path> {
+                  <string:"y">
+                }
+                <operator:subtract>
+                <expression> {
+                  <operator:negate>
+                  <path> {
+                    <string:"z">
+                  }
+                }
+              }
+            }
+            <expression> {
+              <string:"-0.00">
+            }
+          }
+        }
+        <operator:add>
+        <string:" ">
+        <operator:add>
+        <path> {
+          <string:"pancakes">
+          <list> {
+            <expression> {
+              <integer:0>
+            }
+          }
+          <string:"GetTitle">
+          <list> {
+            <expression> {
+              <string:"alpha">
+            }
+            <expression> {
+              <string:"beta">
+            }
+            <expression> {
+              <path> {
+                <string:"petunias">
+                <string:"getCount">
+                <list> {
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    <string:"Method">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"Format">
+          <list> {
+            <expression> {
+              <expression> {
+                <operator:negate>
+                <path> {
+                  <string:"x">
+                }
+              }
+              <operator:add>
+              <expression> {
+                <path> {
+                  <string:"y">
+                }
+                <operator:subtract>
+                <expression> {
+                  <operator:negate>
+                  <path> {
+                    <string:"z">
+                  }
+                }
+              }
+            }
+            <expression> {
+              <string:"-0.00">
+            }
+          }
+        }
+        <operator:add>
+        <string:" ">
+        <operator:add>
+        <path> {
+          <string:"pancakes">
+          <list> {
+            <expression> {
+              <integer:0>
+            }
+          }
+          <string:"GetTitle">
+          <list> {
+            <expression> {
+              <string:"alpha">
+            }
+            <expression> {
+              <string:"beta">
+            }
+            <expression> {
+              <path> {
+                <string:"petunias">
+                <string:"getCount">
+                <list> {
+                }
+              }
+            }
+          }
+        }
+      }
+      <expression> {
+        <integer:83>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 15
+local = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"local">
+  }
+  <expression> {
+    <string:"The answer is ">
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <integer:42>
+          <operator:add>
+          <expression> {
+            <integer:0>
+            <operator:multiply>
+            <path> {
+              <string:"anotherLocal">
+            }
+          }
+        }
+      }
+    }
+    <operator:add>
+    <expression> {
+      <string:".">
+      <operator:add>
+      <expression> {
+        <string:" ">
+      }
+    }
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <operator:logical-not>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"type">
+            }
+            <operator:equal>
+            <string:"builder">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 16
+local = Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"local">
+  }
+  <expression> {
+    <path> {
+      <string:"Format">
+      <list> {
+        <expression> {
+          <expression> {
+            <operator:negate>
+            <path> {
+              <string:"x">
+            }
+          }
+          <operator:add>
+          <expression> {
+            <path> {
+              <string:"y">
+            }
+            <operator:subtract>
+            <expression> {
+              <operator:negate>
+              <path> {
+                <string:"z">
+              }
+            }
+          }
+        }
+        <expression> {
+          <string:"-0.00">
+        }
+      }
+    }
+    <operator:add>
+    <string:" ">
+    <operator:add>
+    <path> {
+      <string:"pancakes">
+      <list> {
+        <expression> {
+          <integer:0>
+        }
+      }
+      <string:"GetTitle">
+      <list> {
+        <expression> {
+          <string:"alpha">
+        }
+        <expression> {
+          <string:"beta">
+        }
+        <expression> {
+          <path> {
+            <string:"petunias">
+            <string:"getCount">
+            <list> {
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 17
+self.property = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"property">
+  }
+  <expression> {
+    <string:"The answer is ">
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <integer:42>
+          <operator:add>
+          <expression> {
+            <integer:0>
+            <operator:multiply>
+            <path> {
+              <string:"anotherLocal">
+            }
+          }
+        }
+      }
+    }
+    <operator:add>
+    <expression> {
+      <string:".">
+      <operator:add>
+      <expression> {
+        <string:" ">
+      }
+    }
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <operator:logical-not>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"type">
+            }
+            <operator:equal>
+            <string:"builder">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 18
+localObjectRef.property = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"localObjectRef">
+    <string:"property">
+  }
+  <expression> {
+    <string:"The answer is ">
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <integer:42>
+          <operator:add>
+          <expression> {
+            <integer:0>
+            <operator:multiply>
+            <path> {
+              <string:"anotherLocal">
+            }
+          }
+        }
+      }
+    }
+    <operator:add>
+    <expression> {
+      <string:".">
+      <operator:add>
+      <expression> {
+        <string:" ">
+      }
+    }
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <operator:logical-not>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"type">
+            }
+            <operator:equal>
+            <string:"builder">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 19
+localObjectRef.propertyA.propertyB = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"localObjectRef">
+    <string:"propertyA">
+    <string:"propertyB">
+  }
+  <expression> {
+    <string:"The answer is ">
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <integer:42>
+          <operator:add>
+          <expression> {
+            <integer:0>
+            <operator:multiply>
+            <path> {
+              <string:"anotherLocal">
+            }
+          }
+        }
+      }
+    }
+    <operator:add>
+    <expression> {
+      <string:".">
+      <operator:add>
+      <expression> {
+        <string:" ">
+      }
+    }
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <operator:logical-not>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"type">
+            }
+            <operator:equal>
+            <string:"builder">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 20
+localArray(1) = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"localArray">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+    }
+  }
+  <expression> {
+    <string:"The answer is ">
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <integer:42>
+          <operator:add>
+          <expression> {
+            <integer:0>
+            <operator:multiply>
+            <path> {
+              <string:"anotherLocal">
+            }
+          }
+        }
+      }
+    }
+    <operator:add>
+    <expression> {
+      <string:".">
+      <operator:add>
+      <expression> {
+        <string:" ">
+      }
+    }
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <operator:logical-not>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"type">
+            }
+            <operator:equal>
+            <string:"builder">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 21
+localArray(1,2) = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"localArray">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+      <expression> {
+        <integer:2>
+      }
+    }
+  }
+  <expression> {
+    <string:"The answer is ">
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <integer:42>
+          <operator:add>
+          <expression> {
+            <integer:0>
+            <operator:multiply>
+            <path> {
+              <string:"anotherLocal">
+            }
+          }
+        }
+      }
+    }
+    <operator:add>
+    <expression> {
+      <string:".">
+      <operator:add>
+      <expression> {
+        <string:" ">
+      }
+    }
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <operator:logical-not>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"type">
+            }
+            <operator:equal>
+            <string:"builder">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 22
+localArray("The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))) = "Test"
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"localArray">
+    <list> {
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  <expression> {
+    <string:"Test">
+  }
+}
+
+####TEST
+####INPUT			TEST: 23
+localArray(Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()), "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))) = "Test"
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"localArray">
+    <list> {
+      <expression> {
+        <path> {
+          <string:"Format">
+          <list> {
+            <expression> {
+              <expression> {
+                <operator:negate>
+                <path> {
+                  <string:"x">
+                }
+              }
+              <operator:add>
+              <expression> {
+                <path> {
+                  <string:"y">
+                }
+                <operator:subtract>
+                <expression> {
+                  <operator:negate>
+                  <path> {
+                    <string:"z">
+                  }
+                }
+              }
+            }
+            <expression> {
+              <string:"-0.00">
+            }
+          }
+        }
+        <operator:add>
+        <string:" ">
+        <operator:add>
+        <path> {
+          <string:"pancakes">
+          <list> {
+            <expression> {
+              <integer:0>
+            }
+          }
+          <string:"GetTitle">
+          <list> {
+            <expression> {
+              <string:"alpha">
+            }
+            <expression> {
+              <string:"beta">
+            }
+            <expression> {
+              <path> {
+                <string:"petunias">
+                <string:"getCount">
+                <list> {
+                }
+              }
+            }
+          }
+        }
+      }
+      <expression> {
+        <string:"The answer is ">
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <integer:42>
+              <operator:add>
+              <expression> {
+                <integer:0>
+                <operator:multiply>
+                <path> {
+                  <string:"anotherLocal">
+                }
+              }
+            }
+          }
+        }
+        <operator:add>
+        <expression> {
+          <string:".">
+          <operator:add>
+          <expression> {
+            <string:" ">
+          }
+        }
+        <operator:add>
+        <path> {
+          <string:"Str">
+          <list> {
+            <expression> {
+              <operator:logical-not>
+              <expression> {
+                <path> {
+                  <string:"bob">
+                  <string:"type">
+                }
+                <operator:equal>
+                <string:"builder">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  <expression> {
+    <string:"Test">
+  }
+}
+
+####TEST
+####INPUT			TEST: 24
+localArray(self.property) = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"localArray">
+    <list> {
+      <expression> {
+        <path> {
+          <string:"self">
+          <string:"property">
+        }
+      }
+    }
+  }
+  <expression> {
+    <string:"The answer is ">
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <integer:42>
+          <operator:add>
+          <expression> {
+            <integer:0>
+            <operator:multiply>
+            <path> {
+              <string:"anotherLocal">
+            }
+          }
+        }
+      }
+    }
+    <operator:add>
+    <expression> {
+      <string:".">
+      <operator:add>
+      <expression> {
+        <string:" ">
+      }
+    }
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <operator:logical-not>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"type">
+            }
+            <operator:equal>
+            <string:"builder">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 25
+localArray(self.propertyA, localB.propertyC) = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"localArray">
+    <list> {
+      <expression> {
+        <path> {
+          <string:"self">
+          <string:"propertyA">
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"localB">
+          <string:"propertyC">
+        }
+      }
+    }
+  }
+  <expression> {
+    <string:"The answer is ">
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <integer:42>
+          <operator:add>
+          <expression> {
+            <integer:0>
+            <operator:multiply>
+            <path> {
+              <string:"anotherLocal">
+            }
+          }
+        }
+      }
+    }
+    <operator:add>
+    <expression> {
+      <string:".">
+      <operator:add>
+      <expression> {
+        <string:" ">
+      }
+    }
+    <operator:add>
+    <path> {
+      <string:"Str">
+      <list> {
+        <expression> {
+          <operator:logical-not>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"type">
+            }
+            <operator:equal>
+            <string:"builder">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+
+
+Error Handling
+-------------------------------
+
+
+####INPUT			TEST: 26		There's two + + signs at the beginning of the expression
+x = "The answer is " + + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+23: Expected operand
+####TEST
+####INPUT			TEST: 27		There's no operator before the name 'errorLocal', a syntax error
+x = "The answer is " + Str(42 + (0 * anotherLocal errorLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+50: Expecting )
+####TEST
+####INPUT			TEST: 28		"Error" is on the end of the line, making an invalid expression
+x = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")) + Str(Not (bob.type = "builder")) "Error"
+
+####OUTPUT
+102: Expected end of line
+####TEST
+####INPUT			TEST: 29		Can't start a statement with an expression
+"The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")("Error")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+0: Expected identifier
+####TEST
+####INPUT			TEST: 30		There's a syntax error, ("Error") is not prefixed by an operator
+x = "The answer is " + Str(42 + (0 * anotherLocal)) + ("." + (" ")("Error")) + Str(Not (bob.type = "builder"))
+
+####OUTPUT
+66: Expecting )
+####TEST
+####INPUT			TEST: 31		Everything after the Format() call is a syntax error
+Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+31: Expected end of line
+####TEST
+####INPUT			TEST: 32		A stray comma in the arguments to Format()
+x = Format(-x + (y - -z), "-0.00", ) + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+35: Expected expression here
+####TEST
+####INPUT			TEST: 33		Too many closing parentheses )
+x = Format(-x + (y - -z), "-0.00") + " " + pancakes(0).GetTitle("alpha", "beta", petunias.getCount()))
+
+####OUTPUT
+101: Expected end of line
+####TEST
+####INPUT			TEST: 34		Missing the last closing parentheses )
+x = Format(-x + (y - -z), "-0.00") + " " + (pancakes(0).GetTitle("alpha", "beta", petunias.getCount())
+
+####OUTPUT
+102: Expecting )
+####TEST
+
+
+
+Original Tests
+--------------------
+
+####INPUT			TEST: 35		Simple method call
+Beep
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Beep">
+  }
+}
+
+####TEST
+####INPUT			TEST: 36		Simple method call with one argument
+Beep(3)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Beep">
+    <list> {
+      <expression> {
+        <integer:3>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 37		Simple method call to a built-in class
+System.Beep
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"Beep">
+  }
+}
+
+####TEST
+####INPUT			TEST: 38		Simple method call to a built-in class, with one argument
+System.Beep(3)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"Beep">
+    <list> {
+      <expression> {
+        <integer:3>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 39		Simple method call to a built-in class, in a mock namespace
+System.UI.Beep
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"UI">
+    <string:"Beep">
+  }
+}
+
+####TEST
+####INPUT			TEST: 40		Chained method call
+System.Process(1).Activate
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"Process">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+    }
+    <string:"Activate">
+  }
+}
+
+####TEST
+####INPUT			TEST: 41		Chain of calls including class constants as arguments
+System.Process(1).Activate(System.Process.Behind, System.Process.Now)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"System">
+    <string:"Process">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+    }
+    <string:"Activate">
+    <list> {
+      <expression> {
+        <path> {
+          <string:"System">
+          <string:"Process">
+          <string:"Behind">
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"System">
+          <string:"Process">
+          <string:"Now">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 42		System method call with a single unbracketed argument
+Console.WriteLine "Hello World!"
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Console">
+    <string:"WriteLine">
+    <list> {
+      <expression> {
+        <string:"Hello World!">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 43		System method call with a single bracketed () argument
+Console.WriteLine("Hello World!")
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"Console">
+    <string:"WriteLine">
+    <list> {
+      <expression> {
+        <string:"Hello World!">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 44		Property assignment with a simple expression
+self.DogsAge = 1 * inX + 2
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"DogsAge">
+  }
+  <expression> {
+    <integer:1>
+    <operator:multiply>
+    <path> {
+      <string:"inX">
+    }
+    <operator:add>
+    <integer:2>
+  }
+}
+
+####TEST
+####INPUT			TEST: 45		Property assignment with a simple expression
+self.DogsAge = new Dog("Fido", 3)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"DogsAge">
+  }
+  <expression> {
+    <operator:new>
+    <string:"Dog">
+    <list> {
+      <expression> {
+        <string:"Fido">
+      }
+      <expression> {
+        <integer:3>
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 46		Property assignment with a simple chained expression
+self.Dog(3) = inAnimals(16).getDog(14)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"self">
+    <string:"Dog">
+    <list> {
+      <expression> {
+        <integer:3>
+      }
+    }
+  }
+  <expression> {
+    <path> {
+      <string:"inAnimals">
+      <list> {
+        <expression> {
+          <integer:16>
+        }
+      }
+      <string:"getDog">
+      <list> {
+        <expression> {
+          <integer:14>
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 47		There is stuff ", picle" after the call to z5()
+x = z5((2 - -y) And (bob.theBuilder = "cool")), picle
+
+####OUTPUT
+46: Expected end of line
+####TEST
+####INPUT			TEST: 48		Assignment of moderately complex expression to simple variable
+x = z5 ((2 - -y) And (bob.theBuilder = "cool")) + 9
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"x">
+  }
+  <expression> {
+    <path> {
+      <string:"z5">
+      <list> {
+        <expression> {
+          <expression> {
+            <integer:2>
+            <operator:subtract>
+            <expression> {
+              <operator:negate>
+              <path> {
+                <string:"y">
+              }
+            }
+          }
+          <operator:logical-and>
+          <expression> {
+            <path> {
+              <string:"bob">
+              <string:"theBuilder">
+            }
+            <operator:equal>
+            <string:"cool">
+          }
+        }
+      }
+    }
+    <operator:add>
+    <integer:9>
+  }
+}
+
+####TEST
+####INPUT			TEST: 49		Call to method with two arguments and excess parentheses (())
+z5 (("cool") + str(5)), pickle
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <expression> {
+          <string:"cool">
+        }
+        <operator:add>
+        <path> {
+          <string:"str">
+          <list> {
+            <expression> {
+              <integer:5>
+            }
+          }
+        }
+      }
+      <expression> {
+        <path> {
+          <string:"pickle">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 50		Call to method with two arguments and excess parentheses ()
+z5 ("cool"), pickle
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <string:"cool">
+      }
+      <expression> {
+        <path> {
+          <string:"pickle">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 51		Call to method with two arguments and excess parentheses ()
+z5 "cool", (pickle)
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <string:"cool">
+      }
+      <expression> {
+        <expression> {
+          <path> {
+            <string:"pickle">
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 52		Call to method with two arguments, one with a keyword embedded
+z5 "cool", ExitBlobs
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <string:"cool">
+      }
+      <expression> {
+        <path> {
+          <string:"ExitBlobs">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 53		Call to method with two arguments, one with a keyword embedded
+z5 "cool", BlobsExit
+
+####OUTPUT
+<statement> {
+  <path> {
+    <string:"z5">
+    <list> {
+      <expression> {
+        <string:"cool">
+      }
+      <expression> {
+        <path> {
+          <string:"BlobsExit">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+
+
+
+Pragmas
+--------------
+
+####INPUT			TEST: 54		Pragma
+#pragma BoundsChecking Off
+
+####OUTPUT
+<statement> {
+  <string:"pragma">
+  <string:"BoundsChecking">
+  <string:"Off">
+}
+
+####TEST
+####INPUT			TEST: 55		Pragma
+#pragma BoundsChecking False
+
+####OUTPUT
+<statement> {
+  <string:"pragma">
+  <string:"BoundsChecking">
+  <string:"false">
+}
+
+####TEST
+####INPUT			TEST: 56		Pragma
+#pragma BoundsChecking 1
+
+####OUTPUT
+<statement> {
+  <string:"pragma">
+  <string:"BoundsChecking">
+  <string:"1">
+}
+
+####TEST
+####INPUT			TEST: 57		Pragma
+#pragma BoundsChecking 1.7
+
+####OUTPUT
+<statement> {
+  <string:"pragma">
+  <string:"BoundsChecking">
+  <string:"1.700000">
+}
+
+####TEST
+
+
+Pragma Errors
+-----------------
+
+####INPUT			TEST: 58		Pragma with invalid value
+#pragma BoundsChecking &cFF0000
+
+####OUTPUT
+23: Expected pragma value
+####TEST
+####INPUT			TEST: 59		Pragma with extra value
+#pragma BoundsChecking On Blobs
+
+####OUTPUT
+26: Expected end of line
+####TEST
+####INPUT			TEST: 60		Pragma with invalid identifier
+#pragma "BoundsChecking" On
+
+####OUTPUT
+8: Expected pragma identifier
+####TEST
+####INPUT			TEST: 61		Pragma missing identifier and value
+#pragma
+
+####OUTPUT
+7: Expected pragma identifier
+####TEST
+
+
+
+
+Exit and Continue keywords
+-------------------
+
+####INPUT			TEST: 62		Exit
+Exit
+
+####OUTPUT
+<statement> {
+  <string:"break">
+}
+
+####TEST
+####INPUT			TEST: 63		Continue
+Continue
+
+####OUTPUT
+<statement> {
+  <string:"continue">
+}
+
+####TEST
+
+
+
+
+Dim and Redim
+-------------------
+
+####INPUT			TEST: 64		Simple Dim
+Dim x As Integer
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"x">
+    }
+    <path> {
+      <string:"Integer">
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 65		Dim with multiple variables
+Dim x, y,z As Integer
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"x">
+      <string:"y">
+      <string:"z">
+    }
+    <path> {
+      <string:"Integer">
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 66		Dim with invalid variable list
+Dim x, y, As Integer
+
+####OUTPUT
+10: Expected identifier
+####TEST
+####INPUT			TEST: 67		Dim with New keyword
+Dim x, y As New Integer
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"x">
+      <string:"y">
+    }
+    <operator:new>
+    <path> {
+      <string:"Integer">
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 68		Dim with initalization
+Dim x, y As Integer = 5 + z
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"x">
+      <string:"y">
+    }
+    <path> {
+      <string:"Integer">
+    }
+    <expression> {
+      <integer:5>
+      <operator:add>
+      <path> {
+        <string:"z">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 69		Dim with initalization with error
+Dim x, y As Integer = 5 + z +
+
+####OUTPUT
+29: Expected operand
+####TEST
+####INPUT			TEST: 70		Dim with new instance and constructor
+Dim animal As New Cat("Felix")
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"animal">
+    }
+    <operator:new>
+    <path> {
+      <string:"Cat">
+      <list> {
+        <expression> {
+          <string:"Felix">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 71		Dim with stupid initalisation
+Dim animal As New Cat("Felix") = nUll
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"animal">
+    }
+    <operator:new>
+    <path> {
+      <string:"Cat">
+      <list> {
+        <expression> {
+          <string:"Felix">
+        }
+      }
+    }
+    <expression> {
+      <null>
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 72		Dim simple array
+Dim animals(1) As CAnimal
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <string:"animals">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+    }
+    <path> {
+      <string:"CAnimal">
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 73		Dim simple array with complex dimension
+Dim animals(x+2) As CAnimal
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <string:"animals">
+    <list> {
+      <expression> {
+        <path> {
+          <string:"x">
+        }
+        <operator:add>
+        <integer:2>
+      }
+    }
+    <path> {
+      <string:"CAnimal">
+    }
+  }
+}
+
+####TEST

@@ -15,6 +15,7 @@ typedef struct Lexer Lexer;
 enum LexerTokenType
 {
     TOKEN_UNRECOGNISED,
+    TOKEN_PRAGMA,
     TOKEN_IDENTIFIER,
     TOKEN_SPACE,
     TOKEN_NEW_LINE,
@@ -32,7 +33,7 @@ enum LexerTokenType
     TOKEN_FINALLY,
     TOKEN_INLINEC,
     TOKEN_HANDLES,
-    TOKEN_OBJECT,
+    /*TOKEN_OBJECT,*/
     TOKEN_STATIC,
     TOKEN_SHARED,
     TOKEN_PUBLIC,
@@ -66,6 +67,8 @@ enum LexerTokenType
     TOKEN_EACH,
     TOKEN_CALL,
     TOKEN_NULL,
+    TOKEN_EXIT,
+    TOKEN_CONTINUE,
     TOKEN_MOD,
     TOKEN_HASH_IF,
     TOKEN_ISA,
@@ -87,6 +90,7 @@ enum LexerTokenType
     TOKEN_IF,
     TOKEN_IS,
     TOKEN_OF,
+    TOKEN_IN,
     TOKEN_NOT_EQUAL,
     TOKEN_LESS_EQUAL,
     TOKEN_MORE_EQUAL,
@@ -132,6 +136,7 @@ typedef struct Token
 Lexer* lexer_create(char *inSource);
 Token lexer_get(Lexer *in_lexer);
 Token lexer_peek(Lexer *in_lexer, int in_how_far);
+long lexer_offset(Lexer *in_lexer);
 
 
 #ifdef DEBUG
