@@ -18,6 +18,7 @@ typedef enum {
     AST_PATH,
     AST_LIST,
     AST_EXPRESSION,
+    AST_CONTROL,
     AST_STRING,
     AST_INTEGER,
     AST_REAL,

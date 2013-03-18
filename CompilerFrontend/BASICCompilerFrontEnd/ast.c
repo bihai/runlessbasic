@@ -183,6 +183,7 @@ static const char* _ast_node_desc(AstNode *in_node, Boolean in_end, int in_level
             case AST_PATH:
             case AST_LIST:
             case AST_EXPRESSION:
+            case AST_CONTROL:
                 sprintf(buffer, "%s}\n", _ast_padding(in_level * 2));
                 break;
             default:
@@ -205,6 +206,9 @@ static const char* _ast_node_desc(AstNode *in_node, Boolean in_end, int in_level
             break;
         case AST_EXPRESSION:
             offset += sprintf(buffer + offset, "expression");
+            break;
+        case AST_CONTROL:
+            offset += sprintf(buffer + offset, "control");
             break;
             
         case AST_NULL:
@@ -272,6 +276,7 @@ static Boolean _has_list(AstNode *in_node)
         case AST_LIST:
         case AST_PATH:
         case AST_STATEMENT:
+        case AST_CONTROL:
             return True;
         default:
             return False;
