@@ -467,7 +467,7 @@ static AstNode* _parse_dim(Parser *in_parser)
         
         /* expect array dimension list */
         expr = _parse_list(in_parser, _parse_expression, False);
-        if (!expr) SYNTAX("Expected identifier");
+        if (!expr) SYNTAX("Expected constant or literal");
         ast_append(cond, expr);
         
         /* expect As */
@@ -1286,11 +1286,32 @@ static AstNode* _parse_routine_arg(Parser *in_parser)
 static AstNode* _parse_routine(Parser *in_parser)
 {
     Token token, token2;
-    AstNode *routine, *result;
+    AstNode *routine, *result, *access, *shared;
     Boolean is_function;
     
     /* create a routine */
     routine = ast_create(AST_CONTROL);
+    
+    /* read access modifier: Public | Protected | Private */
+    token = lexer_get(in_parser->lexer);
+    if (token.type == TOKEN_PUBLIC)
+        access = ast_create_string("public");
+    else if (token.type == TOKEN_PROTECTED)
+        access = ast_create_string("protected");
+    else if (token.type == TOKEN_PRIVATE)
+        access = ast_create_string("private");
+    else
+        SYNTAX("Expected access modifier");
+    
+    /* check for Shared */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_SHARED)
+    {
+        lexer_get(in_parser->lexer);
+        shared = ast_create_string("class");
+    }
+    else
+        shared = ast_create_string("instance");
     
     /* check if Sub or Function and skip keyword */
     token = lexer_get(in_parser->lexer);
@@ -1310,6 +1331,10 @@ static AstNode* _parse_routine(Parser *in_parser)
         }
     }
     ast_append(routine, ast_create_string(token.text));
+    
+    /* append access modifiers and shared modifier */
+    ast_append(routine, access);
+    ast_append(routine, shared);
     
     /* handle optional argument list */
     token = lexer_peek(in_parser->lexer, 0);
@@ -1370,17 +1395,205 @@ static AstNode* _parse_routine(Parser *in_parser)
 
 static AstNode* _parse_property(Parser *in_parser)
 {
+    /* syntax: [<access-modifier>] [Shared] <name>[(<dimensions>)] As [<package>.]<type> */
     
+    Token token;
+    AstNode *prop, *access, *shared, *expr;
     
-    return NULL;
+    /* create proeprty */
+    prop = ast_create(AST_CONTROL);
+    ast_append(prop, ast_create_string("property"));
+    
+    /* read access modifier: Public | Protected | Private */
+    token = lexer_get(in_parser->lexer);
+    if (token.type == TOKEN_PUBLIC)
+        access = ast_create_string("public");
+    else if (token.type == TOKEN_PROTECTED)
+        access = ast_create_string("protected");
+    else if (token.type == TOKEN_PRIVATE)
+        access = ast_create_string("private");
+    else
+        SYNTAX("Expected access modifier");
+    
+    /* check for Shared */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_SHARED)
+    {
+        lexer_get(in_parser->lexer);
+        shared = ast_create_string("class");
+    }
+    else
+        shared = ast_create_string("instance");
+    
+    /* expect property name */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_IDENTIFIER)
+        SYNTAX("Expected property identifier");
+    ast_append(prop, ast_create_string(token.text));
+    
+    /* append access modifiers and shared modifier */
+    ast_append(prop, access);
+    ast_append(prop, shared);
+    
+    /* check for array dimensions */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_PAREN_LEFT)
+    {
+        /* expect array dimension list */
+        expr = _parse_list(in_parser, _parse_expression, False);
+        if (!expr) SYNTAX("Expected constant or literal");
+        ast_append(prop, expr);
+    }
+    
+    /* expect As */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_AS)
+        SYNTAX("Expected As");
+    
+    /* expect type */
+    expr = _parse_path(in_parser);
+    if (!expr) SYNTAX("Expected type or class");
+    ast_append(prop, expr);
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    return prop;
+}
+
+/* TODO: replace all this general path stuff with something designed to parse package.class */
+
+static AstNode* _parse_class(Parser *in_parser)
+{ 
+    /* syntax: Class <name> [Inherits [<package>.]<name>] [Implements [<package>.]<name> [, ...]] <EOL> */
+    Token token, token2, token3;
+    AstNode *class, *routine, *path;
+    
+    /* create class */
+    class = ast_create(AST_CONTROL);
+    ast_append(class, ast_create_string("class"));
+    
+    /* skip Class */
+    lexer_get(in_parser->lexer);
+    
+    /* expect class name */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_IDENTIFIER)
+        SYNTAX("Expected class identifier");
+    ast_append(class, ast_create_string(token.text));
+    
+    /* handle Inherits */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_INHERITS)
+    {
+        lexer_get(in_parser->lexer);
+        path = _parse_path(in_parser);
+        if ((!path) || (ast_count(path) == 0))
+            SYNTAX("Expected class identifier");
+        ast_append(class, path);
+    }
+
+    /* handle Implements */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_IMPLEMENTS)
+    {
+        lexer_get(in_parser->lexer);
+        path = _parse_list(in_parser, _parse_path, True);
+        if ((!path) || (ast_count(ast_child(path, 0)) == 0))
+            SYNTAX("Expected class identifier");
+        ast_append(class, path);
+    }
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    for (;;)
+    {
+        token = lexer_peek(in_parser->lexer, 0);
+        if ((token.type == TOKEN_FUNCTION) || (token.type == TOKEN_SUB) || (token.type == TOKEN_SHARED))
+        {
+            SYNTAX("Expected access specifier");
+        }
+        if (token.type == TOKEN_NEW_LINE)
+        {
+            lexer_get(in_parser->lexer);
+        }
+        else if (token.type == TOKEN_END)
+        {
+            break;
+        }
+        else if ((token.type == TOKEN_PUBLIC) || (token.type == TOKEN_PROTECTED) || (token.type == TOKEN_PRIVATE))
+        {
+            token2 = lexer_peek(in_parser->lexer, 1);
+            token3 = lexer_peek(in_parser->lexer, 2);
+            if ((token2.type == TOKEN_SUB) || (token2.type == TOKEN_FUNCTION) ||
+                (token3.type == TOKEN_SUB) || (token3.type == TOKEN_FUNCTION))
+            {
+                routine = _parse_routine(in_parser);
+                if (!routine) return NULL;
+                ast_append(class, routine);
+            }
+            else
+            {
+                routine = _parse_property(in_parser);
+                if (!routine) return NULL;
+                ast_append(class, routine);
+            }
+        }
+        else
+            SYNTAX("Expected subroutine or property");
+    }
+    
+    /* expect End Class */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_END)
+        SYNTAX("Expected End");
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_CLASS)
+        SYNTAX("Expected Class");
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    return class;
 }
 
 
-static AstNode* _parse_class(Parser *in_parser)
+static AstNode* _parse_file(Parser *in_parser)
 {
+    /* expect class definitions only */
+    Token token;
+    AstNode *file, *class;
     
+    /* create list of file structures */
+    file = ast_create(AST_LIST);
     
-    return NULL;
+    /* iterate over file contents */
+    for (;;)
+    {
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_CLASS)
+        {
+            class = _parse_class(in_parser);
+            if (!class) return NULL;
+            ast_append(file, class);
+        }
+        else if (token.type == TOKEN_NEW_LINE)
+        {
+            lexer_get(in_parser->lexer);
+        }
+        else if (token.offset < 0) break;
+        else
+            SYNTAX("Expected Class");
+    }
+    
+    return file;
 }
 
 
@@ -1496,7 +1709,7 @@ void parser_run_tests()
     test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-control.tests",
                    _test_case_runner, _test_case_result, NULL);
     
-    g_test_parser->init = _parse_routine;
+    g_test_parser->init = _parse_file;
     test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-class.tests",
                    _test_case_runner, _test_case_result, NULL);
 }
