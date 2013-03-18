@@ -354,16 +354,24 @@ static AstNode* _parse_path(Parser *in_parser)
         /* expecting: ( OR . */
         token = lexer_peek(in_parser->lexer, 0);
         if (token.type == TOKEN_DOT)
+        {
             lexer_get(in_parser->lexer);
+            token = lexer_peek(in_parser->lexer, 0);
+            if (token.type != TOKEN_IDENTIFIER)
+                SYNTAX("Expected identifier");
+        }
         else if (token.type == TOKEN_PAREN_LEFT)
         {
             /* parse (...) */
             ast_append(path, _parse_list(in_parser, _parse_expression, False));
             
-            /* expect . */
+            /* check for . */
             token = lexer_peek(in_parser->lexer, 0);
             if (token.type != TOKEN_DOT) break;
             lexer_get(in_parser->lexer);
+            token = lexer_peek(in_parser->lexer, 0);
+            if (token.type != TOKEN_IDENTIFIER)
+                SYNTAX("Expected identifier");
         }
         else break;
         
@@ -779,9 +787,99 @@ static AstNode* _parse_while(Parser *in_parser)
 
 static AstNode* _parse_for(Parser *in_parser)
 {
+    Token token;
+    AstNode *cond, *expr;
     
+    /* create the For node */
+    cond = ast_create(AST_CONTROL);
+    ast_append(cond, ast_create_string("for"));
     
-    return NULL;
+    /* skip the For keyword */
+    lexer_get(in_parser->lexer);
+    
+    /* expect counter variable name or Each keyword */
+    token = lexer_get(in_parser->lexer);
+    if (token.type == TOKEN_IDENTIFIER)
+    {
+        /* parse For Next loop */
+        ast_append(cond, ast_create_string(token.text));
+        
+        /* expect = */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_EQUAL)
+            SYNTAX("Expected =");
+        
+        /* expect expression for start */
+        expr = _parse_expression(in_parser);
+        if (!expr) SYNTAX("Expected counter initalisation expression");
+        ast_append(cond, expr);
+        
+        /* expect To or DownTo */
+        token = lexer_get(in_parser->lexer);
+        if (token.type == TOKEN_TO)
+            ast_append(cond, ast_create_string("increment"));
+        else if (token.type == TOKEN_DOWNTO)
+            ast_append(cond, ast_create_string("decrement"));
+        else
+            SYNTAX("Expected To");
+        
+        /* expect expression for end */
+        expr = _parse_expression(in_parser);
+        if (!expr) SYNTAX("Expected counter limit expression");
+        ast_append(cond, expr);
+        
+        /* check for Step */
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_STEP)
+        {
+            lexer_get(in_parser->lexer);
+            expr = _parse_expression(in_parser);
+            if (!expr) SYNTAX("Expected step expression");
+            ast_append(cond, expr);
+        }
+        else
+        {
+            expr = ast_create(AST_EXPRESSION);
+            ast_append(expr, ast_create_integer(1));
+            ast_append(cond, expr);
+        }
+        
+        /* expect end of line */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
+        
+        /* expect a block */
+        expr = _parse_block(in_parser);
+        if (!expr) return NULL;
+        ast_append(cond, expr);
+        
+        /* expect Next */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEXT)
+            SYNTAX("Expected Next");
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_IDENTIFIER)
+        {
+            lexer_get(in_parser->lexer);
+            if (!ast_text_is(ast_child(cond, 1), token.text))
+                SYNTAX("Counter variable must match For");
+        }
+        
+        /* expect end of line */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
+    }
+    else if (token.type == TOKEN_EACH)
+    {
+        /* parse For Each loop */
+        
+    }
+    else
+        SYNTAX("Expected identifier");
+    
+    return cond;
 }
 
 
@@ -824,7 +922,7 @@ static AstNode* _parse_block(Parser *in_parser)
             result = _parse_compiler_if(in_parser);
         
         /* handle end of block */
-        else if ((token.type == TOKEN_END) || (token.type == TOKEN_ELSE) || (token.type == TOKEN_CASE))
+        else if ((token.type == TOKEN_END) || (token.type == TOKEN_ELSE) || (token.type == TOKEN_CASE) || (token.type == TOKEN_NEXT))
             break;
         
         /* handle blank line */

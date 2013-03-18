@@ -877,3 +877,117 @@ End
 
 ####TEST
 
+
+
+For & For Each loops
+-------------------------
+
+####INPUT			Test: 26		Simple For loop
+For x = 1 To 3
+	Beep
+Next x
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"for">
+    <string:"x">
+    <expression> {
+      <integer:1>
+    }
+    <string:"increment">
+    <expression> {
+      <integer:3>
+    }
+    <expression> {
+      <integer:1>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Beep">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 27		Complicated For loop
+For i = Proxy.GetCount() DownTo 0 Step 2
+	Proxy.Bob i
+Next i
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"for">
+    <string:"i">
+    <expression> {
+      <path> {
+        <string:"Proxy">
+        <string:"GetCount">
+        <list> {
+        }
+      }
+    }
+    <string:"decrement">
+    <expression> {
+      <integer:0>
+    }
+    <expression> {
+      <integer:2>
+    }
+    <list> {
+      <statement> {
+        <path> {
+          <string:"Proxy">
+          <string:"Bob">
+          <list> {
+            <expression> {
+              <path> {
+                <string:"i">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			Test: 28		For loop with invalid closing identifier
+For i = Proxy.GetCount() DownTo 0 Step 2
+	Proxy.Bob i
+Next x
+
+####OUTPUT
+59: Counter variable must match For
+####TEST
+####INPUT			Test: 29		For loop with bad syntax
+For self.i = Proxy.GetCount() DownTo 0 Step 2
+	Proxy.Bob i
+Next x
+
+####OUTPUT
+4: Expected identifier
+####TEST
+####INPUT			Test: 30		For loop with bad syntax
+For bob.i = Proxy.GetCount() DownTo 0 Step 2
+	Proxy.Bob i
+Next x
+
+####OUTPUT
+7: Expected =
+####TEST
+####INPUT			Test: 30		For loop with bad syntax
+For i = 1 To 10 Step a.
+	Proxy.Bob i
+Next
+
+####OUTPUT
+23: Expected identifier
+####TEST
+
+
