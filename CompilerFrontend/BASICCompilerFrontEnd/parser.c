@@ -398,6 +398,123 @@ const char* double_to_string(double in_double)
 }
 
 
+static AstNode* _parse_dim_identifier(Parser *in_parser)
+{
+    Token token;
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_IDENTIFIER)
+        SYNTAX("Expected identifier");
+    return ast_create_string(token.text);
+}
+
+
+static AstNode* _parse_dim(Parser *in_parser)
+{
+    Token token;
+    AstNode *cond, *expr;
+    
+    /* create the Dim node */
+    cond = ast_create(AST_CONTROL);
+    ast_append(cond, ast_create_string("dim"));
+    
+    /* skip the Dim keyword */
+    token = lexer_get(in_parser->lexer);
+    
+    /* check if array dim or normal dim */
+    token = lexer_peek(in_parser->lexer, 1);
+    if (token.type != TOKEN_PAREN_LEFT)
+    {
+        /* expect a list of identifiers */
+        expr = _parse_list(in_parser, _parse_dim_identifier, True);
+        if (!expr) SYNTAX("Expected identifier");
+        ast_append(cond, expr);
+        
+        /* expect As */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_AS)
+            SYNTAX("Expected As");
+        
+        /* handle New */
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_NEW)
+        {
+            lexer_get(in_parser->lexer);
+            ast_append(cond, ast_create_operator("new"));
+        }
+
+        /* expect type path */
+        expr = _parse_path(in_parser);
+        if (!expr) SYNTAX("Expected type or class");
+        ast_append(cond, expr);
+        
+        /* handle initalization */
+        token = lexer_peek(in_parser->lexer, 0);
+        if (token.type == TOKEN_EQUAL)
+        {
+            lexer_get(in_parser->lexer);
+            expr = _parse_expression(in_parser);
+            if (!expr) SYNTAX("Expected initalisation expression");
+            ast_append(cond, expr);
+        }
+    }
+    else
+    {
+        /* expect an array identifier */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_IDENTIFIER)
+            SYNTAX("Expected identifier");
+        ast_append(cond, ast_create_string(token.text));
+        
+        /* expect array dimension list */
+        expr = _parse_list(in_parser, _parse_expression, False);
+        if (!expr) SYNTAX("Expected identifier");
+        ast_append(cond, expr);
+        
+        /* expect As */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_AS)
+            SYNTAX("Expected As");
+        
+        /* expect type path */
+        expr = _parse_path(in_parser);
+        if (!expr) SYNTAX("Expected type or class");
+        ast_append(cond, expr);
+    }
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    return cond;
+}
+
+
+static AstNode* _parse_redim(Parser *in_parser)
+{
+    Token token;
+    AstNode *cond, *expr;
+    
+    /* create the ReDim node */
+    cond = ast_create(AST_CONTROL);
+    ast_append(cond, ast_create_string("redim"));
+    
+    /* skip the ReDim keyword */
+    token = lexer_get(in_parser->lexer);
+    
+    /* expect a path */
+    expr = _parse_path(in_parser);
+    if (!expr) SYNTAX("Expected identifier and new dimensions");
+    ast_append(cond, expr);
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    return NULL;
+}
+
 
 /* parsing: a single line statement (already determined to not be a control structure)
  line can be blank or must be a valid statement;
@@ -406,7 +523,9 @@ const char* double_to_string(double in_double)
  -  a call ()
  -  a compiler #pragma
  -  control keywords: exit, continue
+ -  variable declaration (Dim, Redim)
  */
+/* TODO: Need to implement parsing of Dim statements */
 static AstNode* _parse_statement(Parser *in_parser)
 {
     Token token;
@@ -463,6 +582,24 @@ static AstNode* _parse_statement(Parser *in_parser)
         token = lexer_peek(in_parser->lexer, 0);
         if ((token.type != TOKEN_NEW_LINE) && (token.type != TOKEN_ELSE))
             SYNTAX("Expected end of line");
+    }
+    
+    /* handle dim */
+    else if (token.type == TOKEN_DIM)
+    {
+        /* expect end of line */
+        path = _parse_dim(in_parser);
+        if (!path) return NULL;
+        ast_append(stmt, path);
+    }
+    
+    /* handle redim */
+    else if (token.type == TOKEN_REDIM)
+    {
+        /* expect end of line */
+        path = _parse_redim(in_parser);
+        if (!path) return NULL;
+        ast_append(stmt, path);
     }
     
     /* handle exit */
@@ -1159,7 +1296,7 @@ static const char* _test_case_runner(void *in_user, const char *in_file, int in_
     
     err = NULL;
     
-//    if (in_case_number == 10) /* debugging breakpoint hook */
+//    if (in_case_number == 72) /* debugging breakpoint hook */
 //    {
 //        err = NULL;
 //    }

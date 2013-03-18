@@ -2091,4 +2091,191 @@ Continue
 
 
 
+Dim and Redim
+-------------------
 
+####INPUT			TEST: 64		Simple Dim
+Dim x As Integer
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"x">
+    }
+    <path> {
+      <string:"Integer">
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 65		Dim with multiple variables
+Dim x, y,z As Integer
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"x">
+      <string:"y">
+      <string:"z">
+    }
+    <path> {
+      <string:"Integer">
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 66		Dim with invalid variable list
+Dim x, y, As Integer
+
+####OUTPUT
+10: Expected identifier
+####TEST
+####INPUT			TEST: 67		Dim with New keyword
+Dim x, y As New Integer
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"x">
+      <string:"y">
+    }
+    <operator:new>
+    <path> {
+      <string:"Integer">
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 68		Dim with initalization
+Dim x, y As Integer = 5 + z
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"x">
+      <string:"y">
+    }
+    <path> {
+      <string:"Integer">
+    }
+    <expression> {
+      <integer:5>
+      <operator:add>
+      <path> {
+        <string:"z">
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 69		Dim with initalization with error
+Dim x, y As Integer = 5 + z +
+
+####OUTPUT
+29: Expected operand
+####TEST
+####INPUT			TEST: 70		Dim with new instance and constructor
+Dim animal As New Cat("Felix")
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"animal">
+    }
+    <operator:new>
+    <path> {
+      <string:"Cat">
+      <list> {
+        <expression> {
+          <string:"Felix">
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 71		Dim with stupid initalisation
+Dim animal As New Cat("Felix") = nUll
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <list> {
+      <string:"animal">
+    }
+    <operator:new>
+    <path> {
+      <string:"Cat">
+      <list> {
+        <expression> {
+          <string:"Felix">
+        }
+      }
+    }
+    <expression> {
+      <null>
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 72		Dim simple array
+Dim animals(1) As CAnimal
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <string:"animals">
+    <list> {
+      <expression> {
+        <integer:1>
+      }
+    }
+    <path> {
+      <string:"CAnimal">
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 73		Dim simple array with complex dimension
+Dim animals(x+2) As CAnimal
+
+####OUTPUT
+<statement> {
+  <control> {
+    <string:"dim">
+    <string:"animals">
+    <list> {
+      <expression> {
+        <path> {
+          <string:"x">
+        }
+        <operator:add>
+        <integer:2>
+      }
+    }
+    <path> {
+      <string:"CAnimal">
+    }
+  }
+}
+
+####TEST
