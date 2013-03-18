@@ -373,24 +373,117 @@ static AstNode* _parse_path(Parser *in_parser)
     return path;
 }
 
+
+const char* long_to_string(long in_int)
+{
+    static char buffer[100];
+    snprintf(buffer, 100, "%ld", in_int);
+    return buffer;
+}
+
+
+const char* double_to_string(double in_double)
+{
+    static char buffer[100];
+    snprintf(buffer, 100, "%lf", in_double);
+    return buffer;
+}
+
+
 /* TODO: must also parse pragmas here */
 
 /* parsing: a single line statement (already determined to not be a control structure)
- line can be blank or must be a valid statement */
+ line can be blank or must be a valid statement;
+ a valid statement can consist of:
+ -  an assignment x = ...
+ -  a call ()
+ -  a compiler #pragma
+ -  control keywords: break, continue
+ */
 static AstNode* _parse_statement(Parser *in_parser)
 {
     Token token;
+    AstNode *stmt;
     AstNode *path;
     AstNode *list;
     AstNode *last;
     int i, c;
     
     /* begin statement */
-    in_parser->statement = ast_create(AST_STATEMENT);
+    stmt = in_parser->statement = ast_create(AST_STATEMENT);
     
-    /* statement must start with a path */
+    /* peek at the first token */
     token = lexer_peek(in_parser->lexer, 0);
-    if ((token.type == TOKEN_IDENTIFIER) || (token.type == TOKEN_SELF) ||
+    
+    /* handle #pragma */
+    if (token.type == TOKEN_PRAGMA)
+    {
+        /* expect an identifier, followed by a constant, followed by end of line */
+        lexer_get(in_parser->lexer);
+        ast_append(stmt, ast_create_string("pragma"));
+        
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_IDENTIFIER)
+            SYNTAX("Expected pragma identifier");
+        ast_append(stmt, ast_create_string(token.text));
+        
+        token = lexer_get(in_parser->lexer);
+        switch (token.type)
+        {
+            case TOKEN_IDENTIFIER:
+                ast_append(stmt, ast_create_string(token.text));
+                break;
+            case TOKEN_LIT_STRING:
+                ast_append(stmt, ast_create_string(token.text));
+                break;
+            case TOKEN_LIT_INTEGER:
+                ast_append(stmt, ast_create_string( long_to_string(token.value.integer) ));
+                break;
+            case TOKEN_LIT_REAL:
+                ast_append(stmt, ast_create_string( double_to_string(token.value.real) ));
+                break;
+            case TOKEN_TRUE:
+                ast_append(stmt, ast_create_string("true"));
+                break;
+            case TOKEN_FALSE:
+                ast_append(stmt, ast_create_string("false"));
+                break;
+            default:
+                SYNTAX("Expected pragma value");
+                break;
+        }
+        
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
+    }
+    
+    /* handle exit */
+    else if (token.type == TOKEN_EXIT)
+    {
+        /* expect end of line */
+        
+        
+        lexer_get(in_parser->lexer);
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
+    }
+    
+    /* handle continue */
+    else if (token.type == TOKEN_CONTINUE)
+    {
+        /* expect end of line */
+        
+        
+        lexer_get(in_parser->lexer);
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_NEW_LINE)
+            SYNTAX("Expected end of line");
+    }
+    
+    /* handle assignment or call() */
+    else if ((token.type == TOKEN_IDENTIFIER) || (token.type == TOKEN_SELF) ||
         (token.type == TOKEN_ME) || (token.type == TOKEN_SUPER))
     {
         /* parse path */
@@ -445,10 +538,15 @@ static AstNode* _parse_statement(Parser *in_parser)
             SYNTAX("Expected end of line");
         
     }
+    
+    /* statement can be empty */
     else if (token.type == TOKEN_NEW_LINE)
     {
-        /* statement can be empty */
+        /* ignore newline */
+        lexer_get(in_parser->lexer);
     }
+    
+    /* anything else is a syntax error */
     else
     {
         SYNTAX("Expected identifier");

@@ -1984,3 +1984,83 @@ z5 "cool", BlobsExit
 
 ####TEST
 
+
+
+Pragmas
+--------------
+
+####INPUT			TEST: 54		Pragma
+#pragma BoundsChecking Off
+
+####OUTPUT
+<statement> {
+  <string:"pragma">
+  <string:"BoundsChecking">
+  <string:"Off">
+}
+
+####TEST
+####INPUT			TEST: 55		Pragma
+#pragma BoundsChecking False
+
+####OUTPUT
+<statement> {
+  <string:"pragma">
+  <string:"BoundsChecking">
+  <string:"false">
+}
+
+####TEST
+####INPUT			TEST: 56		Pragma
+#pragma BoundsChecking 1
+
+####OUTPUT
+<statement> {
+  <string:"pragma">
+  <string:"BoundsChecking">
+  <string:"1">
+}
+
+####TEST
+####INPUT			TEST: 57		Pragma
+#pragma BoundsChecking 1.7
+
+####OUTPUT
+<statement> {
+  <string:"pragma">
+  <string:"BoundsChecking">
+  <string:"1.700000">
+}
+
+####TEST
+
+
+Pragma Errors
+-----------------
+
+####INPUT			TEST: 58		Pragma with invalid value
+#pragma BoundsChecking &cFF0000
+
+####OUTPUT
+23: Expected pragma value
+####TEST
+####INPUT			TEST: 59		Pragma with extra value
+#pragma BoundsChecking On Blobs
+
+####OUTPUT
+26: Expected end of line
+####TEST
+####INPUT			TEST: 60		Pragma with invalid identifier
+#pragma "BoundsChecking" On
+
+####OUTPUT
+8: Expected pragma identifier
+####TEST
+####INPUT			TEST: 61		Pragma missing identifier and value
+#pragma
+
+####OUTPUT
+7: Expected pragma identifier
+####TEST
+
+
