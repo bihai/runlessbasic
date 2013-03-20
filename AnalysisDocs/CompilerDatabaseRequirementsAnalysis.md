@@ -84,6 +84,14 @@ Build artifacts.
 			*	is array?
 
 
+SQLite
+------
+
+SQLite + FTS4 is looking like the ideal choice at this stage for the database components of the compiler.
+
+It will be wrapped in an appropriate API.
+
+
 Built-ins Database
 ------------------
 
@@ -98,6 +106,7 @@ It might even be that the database is produced in the same way, by reading a bun
 
 This needs to be developed further.
 
+Can prototype during development of the compiler.
 
 
 
