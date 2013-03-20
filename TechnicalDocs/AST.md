@@ -124,6 +124,45 @@ Similarly, the various control structures can be represented as follows:
 
 Statements have the following forms:
 
+*	AST_STATEMENT - DIM (array)
+	*	AST_CONTROL
+		*	AST_STRING - "dim"
+		*	AST_STRING - local variable name
+		*	AST_LIST - array dimensions
+			*	AST_EXPRESSION - dimension 1
+			*	...
+			*	AST_EXPRESSION - dimension N
+		*	AST_PATH - type
+*	AST_STATEMENT - DIM (not array)
+	*	AST_CONTROL
+		*	AST_STRING - "dim"
+		*	AST_LIST - variable name(s)
+			*	AST_STRING - variable name 1
+			*	...
+			*	AST_STRING - variable name N
+		*	AST_OPERATOR: "new" (optional)
+		*	AST_PATH - type
+		*	AST_EXPRESSION - (optional) initaliser
+*	AST_STATEMENT - break from select or loop
+	*	AST_STRING - "break"
+*	AST_STATEMENT - continue next iteration of loop
+	*	AST_STRING - "continue"
+*	AST_STATEMENT - compiler #pragma
+	*	AST_STRING - "pragma"
+	*	AST_STRING - pragma name, eg. "BoundsChecks"
+	*	pragma value: AST_STRING, AST_INTEGER, or AST_REAL
+*	AST_STATEMENT - assignment
+	*	AST_PATH - destination
+	*	AST_EXPRESSION - source
+*	AST_STATEMENT - method
+	*	AST_PATH - method call
+
+
+Finally, AST_PATH type nodes take the following form: AST_STRING \[AST_LIST\] ...
+where AST_LIST is a list of arguments or array indicies.
+
+AST_EXPRESSION nodes will only ever contain a combination of AST_OPERATOR, AST_EXPRESSION and any of the value node types: AST_NULL, AST_STRING, etc.
+
 
 
 
