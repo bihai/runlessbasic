@@ -78,5 +78,53 @@ Breifly, the form of a syntax tree containing one instance of every major elemen
 			*	AST_STRING - shared? "instance" or "class"
 			*	AST_PATH - type
 
+
 Similarly, the various control structures can be represented as follows:
+
+*	AST_CONTROL	- IF
+	*	AST_STRING - "if"
+	*	AST_EXPRESSION - condition 1
+	*	AST_LIST - code block 1
+	*	...
+	*	AST_EXPRESSION - condition N
+	*	AST_LIST - code block N
+	*	AST_LIST - (optional) ELSE code block
+*	AST_CONTROL - SELECT CASE
+	*	AST_STRING - "select"
+	*	AST_EXPRESSION - base expression
+	*	AST_EXPRESSION - case expression 1
+	*	AST_LIST - case block 1
+	*	...
+	*	AST_EXPRESSION - case expression N
+	*	AST_LIST - case block N
+	*	AST_LIST - (optional) CASE ELSE code block
+*	AST_CONTROL - FOR
+	*	AST_STRING - "for"
+	*	AST_STRING - counter local variable name
+	*	AST_EXPRESSION - initial counter value
+	*	AST_STRING - "increment" or "decrement"
+	*	AST_EXPRESSION - counter limit value
+	*	AST_EXPRESSION - (optional) counter step value
+	*	AST_LIST - code block
+*	AST_CONTROL - FOR EACH
+	*	AST_STRING - "foreach"
+	*	AST_STRING - local item variable name
+	*	AST_EXPRESSION - iterable expression/array expression
+	*	AST_LIST - code block
+*	AST_CONTROL - WHILE
+	*	AST_STRING - "while"
+	*	AST_EXPRESSION - condition
+	*	AST_LIST - code block
+*	AST_CONTROL - DO
+	*	AST_STRING - "do"
+	*	AST_EXPRESSION - (optional) pre-condition Until
+	*	AST_LIST - code block
+	*	AST_EXPRESSION - (optional) post-condition Until
+
+
+Statements have the following forms:
+
+
+
+
 
