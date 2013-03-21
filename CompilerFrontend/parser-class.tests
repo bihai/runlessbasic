@@ -112,7 +112,7 @@ End Class
       <list> {
         <list> {
           <string:"inMessage">
-          <null>
+          <string:"value">
           <path> {
             <string:"String">
           }
@@ -329,14 +329,14 @@ End Class
       <list> {
         <list> {
           <string:"inArgA">
-          <string:"()">
+          <string:"array">
           <path> {
             <string:"Integer">
           }
         }
         <list> {
           <string:"inArgB">
-          <null>
+          <string:"value">
           <path> {
             <string:"Obj">
           }
@@ -375,3 +375,230 @@ End Class
 ####TEST
 
 
+####INPUT			TEST: 13		Class with event declarations
+Class CTest
+
+	Event Connected
+	Event StatusChanged(inNewStatus As Connection.Status)
+	Event CancelTermination() As Boolean
+	
+	Public Sub test
+		MsgBox "Hello World!"
+	End Sub
+	
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CTest">
+    <control> {
+      <string:"event">
+      <string:"Connected">
+    }
+    <control> {
+      <string:"event">
+      <string:"StatusChanged">
+      <list> {
+        <list> {
+          <string:"inNewStatus">
+          <string:"value">
+          <path> {
+            <string:"Connection">
+            <string:"Status">
+          }
+        }
+      }
+    }
+    <control> {
+      <string:"event">
+      <string:"CancelTermination">
+      <list> {
+      }
+      <path> {
+        <string:"Boolean">
+      }
+    }
+    <control> {
+      <string:"subroutine">
+      <string:"test">
+      <string:"public">
+      <string:"instance">
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <string:"Hello World!">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 14		Class with event handlers
+Class CTestComplex inherits CTest
+
+	Handler Connected
+		MsgBox "Connected!"
+	End Handler
+	
+	Handler StatusChanged(inNewStatus As Connection.Status)
+		Self.Msg = "Status: "+ inNewStatus
+	End Handler
+	
+	Handler CancelTermination As Boolean
+		Return False
+	End Handler
+	
+	Handler MyButton.Click
+		MsgBox "Button was clicked!"
+	End Handler
+	
+End Class
+
+####OUTPUT
+<list> {
+  <control> {
+    <string:"class">
+    <string:"CTestComplex">
+    <path> {
+      <string:"CTest">
+    }
+    <control> {
+      <string:"handler">
+      <string:"Connected">
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <string:"Connected!">
+              }
+            }
+          }
+        }
+      }
+    }
+    <control> {
+      <string:"handler">
+      <string:"StatusChanged">
+      <list> {
+        <list> {
+          <string:"inNewStatus">
+          <string:"value">
+          <path> {
+            <string:"Connection">
+            <string:"Status">
+          }
+        }
+      }
+      <list> {
+        <statement> {
+          <path> {
+            <string:"self">
+            <string:"Msg">
+          }
+          <expression> {
+            <string:"Status: ">
+            <operator:add>
+            <path> {
+              <string:"inNewStatus">
+            }
+          }
+        }
+      }
+    }
+    <control> {
+      <string:"handler">
+      <string:"CancelTermination">
+      <path> {
+        <string:"Boolean">
+      }
+      <list> {
+        <statement> {
+          <control> {
+            <string:"return">
+            <expression> {
+              <boolean:false>
+            }
+          }
+        }
+      }
+    }
+    <control> {
+      <string:"handler">
+      <string:"MyButton">
+      <string:"Click">
+      <list> {
+        <statement> {
+          <path> {
+            <string:"MsgBox">
+            <list> {
+              <expression> {
+                <string:"Button was clicked!">
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+####TEST
+####INPUT			TEST: 15		Class with event syntax errors
+Class CBad
+
+	Handler 
+		MsgBox "Connected!"
+	End Handler
+	
+End Class
+
+####OUTPUT
+24: Expected event identifier
+####TEST
+####INPUT			TEST: 16		Class with event syntax errors
+Class CBad
+
+	Handler Open As
+		MsgBox "Connected!"
+	End Handler
+	
+End Class
+
+####OUTPUT
+28: Expected return type
+####TEST
+####INPUT			TEST: 17		Class with event syntax errors
+Class CBad
+
+	Handler Open( As
+		MsgBox "Connected!"
+	End Handler
+	
+End Class
+
+####OUTPUT
+27: Expected argument name
+####TEST
+####INPUT			TEST: 18		Class with event syntax errors
+Class CBad
+
+	Handler Open( )
+		MsgBox "Connected!"
+	End 
+	
+End Class
+
+####OUTPUT
+56: Expected End Handler
+####TEST

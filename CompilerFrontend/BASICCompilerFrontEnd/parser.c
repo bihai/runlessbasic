@@ -1247,9 +1247,19 @@ static AstNode* _parse_routine_arg(Parser *in_parser)
 {
     Token token;
     AstNode *arg, *result;
+    Boolean by_ref;
     
     /* create an argument */
     arg = ast_create(AST_LIST);
+    
+    /* check for byref/byval */
+    by_ref = False;
+    token = lexer_peek(in_parser->lexer, 0);
+    if ((token.type == TOKEN_BYREF) || (token.type == TOKEN_BYVAL))
+    {
+        lexer_get(in_parser->lexer);
+        if (token.type == TOKEN_BYREF) by_ref = True;
+    }
     
     /* expect argument name */
     token = lexer_get(in_parser->lexer);
@@ -1265,9 +1275,13 @@ static AstNode* _parse_routine_arg(Parser *in_parser)
         token = lexer_get(in_parser->lexer);
         if (token.type != TOKEN_PAREN_RIGHT)
             SYNTAX("Expected )");
-        ast_append(arg, ast_create_string("()"));
+        ast_append(arg, ast_create_string("array"));
     }
-    else ast_append(arg, ast_create(AST_NULL));
+    else
+    {
+        if (by_ref) ast_append(arg, ast_create_string("reference"));
+        else ast_append(arg, ast_create_string("value"));
+    }
     
     /* expect As */
     token = lexer_get(in_parser->lexer);
@@ -1463,6 +1477,135 @@ static AstNode* _parse_property(Parser *in_parser)
     return prop;
 }
 
+
+static AstNode* _parse_event_decl(Parser *in_parser)
+{
+    Token token;
+    AstNode *event, *result;
+    
+    /* create event declaration */
+    event = ast_create(AST_CONTROL);
+    ast_append(event, ast_create_string("event"));
+    
+    /* skip Event */
+    lexer_get(in_parser->lexer);
+    
+    /* expect event identifier */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_IDENTIFIER) SYNTAX("Expected event identifier");
+    ast_append(event, ast_create_string(token.text));
+    
+    /* handle optional argument list */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_PAREN_LEFT)
+    {
+        result = _parse_list(in_parser, _parse_routine_arg, False);
+        if (!result) return NULL;
+        ast_append(event, result);
+    }
+    
+    /* handle optional return type */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_AS)
+    {
+        /* expect As */
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_AS)
+            SYNTAX("Expected As");
+        
+        /* expect return type */
+        result = _parse_path(in_parser);
+        if (!result) return NULL;
+        ast_append(event, result);
+    }
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    return event;
+}
+
+
+static AstNode* _parse_event_hdlr(Parser *in_parser)
+{
+    Token token, token2;
+    AstNode *event, *result;
+    
+    /* create event declaration */
+    event = ast_create(AST_CONTROL);
+    ast_append(event, ast_create_string("handler"));
+    
+    /* skip Handler */
+    lexer_get(in_parser->lexer);
+    
+    /* expect event identifier */
+    token = lexer_get(in_parser->lexer);
+    token2 = lexer_peek(in_parser->lexer, 0);
+    if ((token.type == TOKEN_IDENTIFIER) && (token2.type == TOKEN_DOT))
+    {
+        ast_append(event, ast_create_string(token.text));
+        lexer_get(in_parser->lexer);
+        token = lexer_get(in_parser->lexer);
+        if (token.type != TOKEN_IDENTIFIER) SYNTAX("Expected event identifier");
+        ast_append(event, ast_create_string(token.text));
+    }
+    else
+    {
+        if (token.type != TOKEN_IDENTIFIER) SYNTAX("Expected event identifier");
+        ast_append(event, ast_create_string(token.text));
+    }
+    
+    
+    /* handle optional argument list */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_PAREN_LEFT)
+    {
+        result = _parse_list(in_parser, _parse_routine_arg, False);
+        if (!result) return NULL;
+        ast_append(event, result);
+    }
+    
+    /* handle optional return type */
+    token = lexer_peek(in_parser->lexer, 0);
+    if (token.type == TOKEN_AS)
+    {
+        /* expect As */
+        token = lexer_get(in_parser->lexer);
+        
+        /* expect return type */
+        result = _parse_path(in_parser);
+        if ( (!result) || (ast_count(result) == 0) )
+            SYNTAX("Expected return type");
+        ast_append(event, result);
+    }
+    
+    /* expect end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+    
+    /* expect block */
+    result = _parse_block(in_parser);
+    if (!result) return NULL;
+    ast_append(event, result);
+    
+    /* expect End Handler */
+    token = lexer_get(in_parser->lexer);
+    token2 = lexer_get(in_parser->lexer);
+    if ((token.type != TOKEN_END) || (token2.type != TOKEN_HANDLER))
+        SYNTAX("Expected End Handler");
+    
+    /* expected end of line */
+    token = lexer_get(in_parser->lexer);
+    if (token.type != TOKEN_NEW_LINE)
+        SYNTAX("Expected end of line");
+
+    return event;
+}
+
+
 /* TODO: replace all this general path stuff with something designed to parse package.class */
 
 static AstNode* _parse_class(Parser *in_parser)
@@ -1525,6 +1668,18 @@ static AstNode* _parse_class(Parser *in_parser)
         else if (token.type == TOKEN_END)
         {
             break;
+        }
+        else if (token.type == TOKEN_EVENT)
+        {
+            routine = _parse_event_decl(in_parser);
+            if (!routine) return NULL;
+            ast_append(class, routine);
+        }
+        else if (token.type == TOKEN_HANDLER)
+        {
+            routine = _parse_event_hdlr(in_parser);
+            if (!routine) return NULL;
+            ast_append(class, routine);
         }
         else if ((token.type == TOKEN_PUBLIC) || (token.type == TOKEN_PROTECTED) || (token.type == TOKEN_PRIVATE))
         {
@@ -1667,7 +1822,7 @@ static const char* _test_case_runner(void *in_user, const char *in_file, int in_
     
     err = NULL;
     
-//    if (in_case_number == 72) /* debugging breakpoint hook */
+//    if (in_case_number == 4) /* debugging breakpoint hook */
 //    {
 //        err = NULL;
 //    }

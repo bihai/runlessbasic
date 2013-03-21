@@ -76,7 +76,20 @@ Breifly, the form of a syntax tree containing one instance of every major elemen
 			*	AST_STRING - property name, eg. "pHouses"
 			*	AST_STRING - access: "public", "protected" or "private"
 			*	AST_STRING - shared? "instance" or "class"
+			*	AST_LIST - (optional) array dimensions
 			*	AST_PATH - type
+		*	AST_CONTROL - (0+) an event declaration
+			*	AST_STRING - "event"
+			*	AST_STRING - event name, eg. "Connected"
+			*	AST_LIST - (optional) argument list
+			*	AST_PATH - (optional) return type
+		*	AST_CONTROL - (0+) an event handler
+			*	AST_STRING - "handler"
+			*	AST_STRING - (optional) window's control name, eg. "btnConnect"
+			*	AST_STRING - event name, eg. "Click"
+			*	AST_LIST - (optional) argument list
+			*	AST_PATH - (optional) return type
+			*	AST_LIST - handler code block
 
 
 Similarly, the various control structures can be represented as follows:
