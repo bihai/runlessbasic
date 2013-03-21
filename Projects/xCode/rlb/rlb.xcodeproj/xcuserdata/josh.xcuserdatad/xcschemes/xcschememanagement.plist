@@ -9,9 +9,19 @@
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
+		<key>rlbtests.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>1</integer>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>0343674D16FBD493007ACB57</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>0351F39C16FBCF72000BDB70</key>
 		<dict>
 			<key>primary</key>

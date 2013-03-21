@@ -7,16 +7,31 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0343675916FBD4B1007ACB57 /* run-tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B216FBCFB3000BDB70 /* run-tests.c */; };
+		0343675A16FBD4BB007ACB57 /* ast.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AA16FBCFB3000BDB70 /* ast.c */; };
+		0343675B16FBD4C7007ACB57 /* lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AC16FBCFB3000BDB70 /* lexer.c */; };
+		0343675C16FBD4C9007ACB57 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AE16FBCFB3000BDB70 /* memory.c */; };
+		0343675D16FBD4CB007ACB57 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B016FBCFB3000BDB70 /* parser.c */; };
+		0343675E16FBD4CE007ACB57 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B416FBCFB3000BDB70 /* test.c */; };
+		0343676016FBD5B1007ACB57 /* run-tool.c in Sources */ = {isa = PBXBuildFile; fileRef = 0343675F16FBD5B1007ACB57 /* run-tool.c */; };
 		0351F3A416FBCF72000BDB70 /* rlb.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0351F3A316FBCF72000BDB70 /* rlb.1 */; };
 		0351F3B616FBCFB3000BDB70 /* ast.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AA16FBCFB3000BDB70 /* ast.c */; };
 		0351F3B716FBCFB3000BDB70 /* lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AC16FBCFB3000BDB70 /* lexer.c */; };
 		0351F3B816FBCFB3000BDB70 /* memory.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AE16FBCFB3000BDB70 /* memory.c */; };
 		0351F3B916FBCFB3000BDB70 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B016FBCFB3000BDB70 /* parser.c */; };
-		0351F3BA16FBCFB3000BDB70 /* run-tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B216FBCFB3000BDB70 /* run-tests.c */; };
 		0351F3BB16FBCFB3000BDB70 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B416FBCFB3000BDB70 /* test.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		0343674C16FBD493007ACB57 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
 		0351F39B16FBCF72000BDB70 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -30,6 +45,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0343674E16FBD493007ACB57 /* rlbtests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rlbtests; sourceTree = BUILT_PRODUCTS_DIR; };
+		0343675F16FBD5B1007ACB57 /* run-tool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "run-tool.c"; path = "../../../../Compiler/run-tool.c"; sourceTree = "<group>"; };
 		0351F39D16FBCF72000BDB70 /* rlb */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rlb; sourceTree = BUILT_PRODUCTS_DIR; };
 		0351F3A316FBCF72000BDB70 /* rlb.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = rlb.1; sourceTree = "<group>"; };
 		0351F3AA16FBCFB3000BDB70 /* ast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ast.c; path = ../../../../Compiler/ast.c; sourceTree = "<group>"; };
@@ -47,6 +64,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		0343674B16FBD493007ACB57 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0351F39A16FBCF72000BDB70 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -69,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				0351F39D16FBCF72000BDB70 /* rlb */,
+				0343674E16FBD493007ACB57 /* rlbtests */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -76,6 +101,7 @@
 		0351F3A016FBCF72000BDB70 /* rlb */ = {
 			isa = PBXGroup;
 			children = (
+				0343675F16FBD5B1007ACB57 /* run-tool.c */,
 				0351F3B216FBCFB3000BDB70 /* run-tests.c */,
 				0351F3AA16FBCFB3000BDB70 /* ast.c */,
 				0351F3AB16FBCFB3000BDB70 /* ast.h */,
@@ -96,6 +122,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0343674D16FBD493007ACB57 /* rlbtests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0343675716FBD493007ACB57 /* Build configuration list for PBXNativeTarget "rlbtests" */;
+			buildPhases = (
+				0343674A16FBD493007ACB57 /* Sources */,
+				0343674B16FBD493007ACB57 /* Frameworks */,
+				0343674C16FBD493007ACB57 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = rlbtests;
+			productName = rlbtests;
+			productReference = 0343674E16FBD493007ACB57 /* rlbtests */;
+			productType = "com.apple.product-type.tool";
+		};
 		0351F39C16FBCF72000BDB70 /* rlb */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0351F3A716FBCF72000BDB70 /* Build configuration list for PBXNativeTarget "rlb" */;
@@ -135,11 +178,25 @@
 			projectRoot = "";
 			targets = (
 				0351F39C16FBCF72000BDB70 /* rlb */,
+				0343674D16FBD493007ACB57 /* rlbtests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0343674A16FBD493007ACB57 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0343675916FBD4B1007ACB57 /* run-tests.c in Sources */,
+				0343675C16FBD4C9007ACB57 /* memory.c in Sources */,
+				0343675D16FBD4CB007ACB57 /* parser.c in Sources */,
+				0343675E16FBD4CE007ACB57 /* test.c in Sources */,
+				0343675B16FBD4C7007ACB57 /* lexer.c in Sources */,
+				0343675A16FBD4BB007ACB57 /* ast.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		0351F39916FBCF72000BDB70 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -148,14 +205,33 @@
 				0351F3B716FBCFB3000BDB70 /* lexer.c in Sources */,
 				0351F3B816FBCFB3000BDB70 /* memory.c in Sources */,
 				0351F3B916FBCFB3000BDB70 /* parser.c in Sources */,
-				0351F3BA16FBCFB3000BDB70 /* run-tests.c in Sources */,
 				0351F3BB16FBCFB3000BDB70 /* test.c in Sources */,
+				0343676016FBD5B1007ACB57 /* run-tool.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
+		0343675516FBD493007ACB57 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+					"TESTSDIR=\"\\\"/Users/josh/Projects/Active/runlessbasic/Compiler/tests/\\\"\"",
+				);
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		0343675616FBD493007ACB57 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		0351F3A516FBCF72000BDB70 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -213,6 +289,7 @@
 		0351F3A816FBCF72000BDB70 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -227,6 +304,14 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		0343675716FBD493007ACB57 /* Build configuration list for PBXNativeTarget "rlbtests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0343675516FBD493007ACB57 /* Debug */,
+				0343675616FBD493007ACB57 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
 		0351F39716FBCF72000BDB70 /* Build configuration list for PBXProject "rlb" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
