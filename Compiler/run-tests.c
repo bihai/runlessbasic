@@ -1,6 +1,6 @@
 /*
  * parser.h
- * BASIC Compiler Front-end
+ * RunlessBASIC Compiler
  *
  * (c) 2013 Joshua Hawcroft
  *

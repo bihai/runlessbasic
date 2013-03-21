@@ -1857,15 +1857,15 @@ void parser_run_tests()
         return;
     }
     
-    test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-statement.tests",
+    test_run_cases(TESTSDIR "parser-statement.tests",
                    _test_case_runner, _test_case_result, NULL);
     
     g_test_parser->init = _parse_block;
-    test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-control.tests",
+    test_run_cases(TESTSDIR "parser-control.tests",
                    _test_case_runner, _test_case_result, NULL);
     
     g_test_parser->init = _parse_file;
-    test_run_cases("/Users/josh/Projects/Active/runlessbasic/CompilerFrontend/parser-class.tests",
+    test_run_cases(TESTSDIR "parser-class.tests",
                    _test_case_runner, _test_case_result, NULL);
 }
 
