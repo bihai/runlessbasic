@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		031DEEE116FC267B00301998 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 031DEEE016FC267B00301998 /* sqlite3.c */; };
 		0343675916FBD4B1007ACB57 /* run-tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B216FBCFB3000BDB70 /* run-tests.c */; };
 		0343675A16FBD4BB007ACB57 /* ast.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AA16FBCFB3000BDB70 /* ast.c */; };
 		0343675B16FBD4C7007ACB57 /* lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AC16FBCFB3000BDB70 /* lexer.c */; };
@@ -47,6 +48,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		031DEEE016FC267B00301998 /* sqlite3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../../../../Compiler/sqlite/sqlite3.c; sourceTree = "<group>"; };
+		031DEEE216FC268300301998 /* sqlite3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ../../../../Compiler/sqlite/sqlite3.h; sourceTree = "<group>"; };
+		031DEEE416FC2A3500301998 /* rlb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rlb.h; path = ../../../../Compiler/rlb.h; sourceTree = "<group>"; };
 		0343674E16FBD493007ACB57 /* rlbtests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rlbtests; sourceTree = BUILT_PRODUCTS_DIR; };
 		0343675F16FBD5B1007ACB57 /* run-tool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "run-tool.c"; path = "../../../../Compiler/run-tool.c"; sourceTree = "<group>"; };
 		0343676116FBD6CD007ACB57 /* index.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = index.c; path = ../../../../Compiler/index.c; sourceTree = "<group>"; };
@@ -62,7 +66,6 @@
 		0351F3B016FBCFB3000BDB70 /* parser.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = parser.c; path = ../../../../Compiler/parser.c; sourceTree = "<group>"; };
 		0351F3B116FBCFB3000BDB70 /* parser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = parser.h; path = ../../../../Compiler/parser.h; sourceTree = "<group>"; };
 		0351F3B216FBCFB3000BDB70 /* run-tests.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "run-tests.c"; path = "../../../../Compiler/run-tests.c"; sourceTree = "<group>"; };
-		0351F3B316FBCFB3000BDB70 /* sqlite */ = {isa = PBXFileReference; lastKnownFileType = folder; name = sqlite; path = ../../../../Compiler/sqlite; sourceTree = "<group>"; };
 		0351F3B416FBCFB3000BDB70 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = test.c; path = ../../../../Compiler/test.c; sourceTree = "<group>"; };
 		0351F3B516FBCFB3000BDB70 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = test.h; path = ../../../../Compiler/test.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -85,6 +88,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		031DEEE316FC268F00301998 /* sqlite */ = {
+			isa = PBXGroup;
+			children = (
+				031DEEE216FC268300301998 /* sqlite3.h */,
+				031DEEE016FC267B00301998 /* sqlite3.c */,
+			);
+			name = sqlite;
+			sourceTree = "<group>";
+		};
 		0351F39216FBCF72000BDB70 = {
 			isa = PBXGroup;
 			children = (
@@ -105,6 +117,7 @@
 		0351F3A016FBCF72000BDB70 /* rlb */ = {
 			isa = PBXGroup;
 			children = (
+				031DEEE416FC2A3500301998 /* rlb.h */,
 				0343675F16FBD5B1007ACB57 /* run-tool.c */,
 				0351F3B216FBCFB3000BDB70 /* run-tests.c */,
 				0351F3AA16FBCFB3000BDB70 /* ast.c */,
@@ -119,7 +132,7 @@
 				0351F3B516FBCFB3000BDB70 /* test.h */,
 				0343676416FBD6DA007ACB57 /* index.h */,
 				0343676116FBD6CD007ACB57 /* index.c */,
-				0351F3B316FBCFB3000BDB70 /* sqlite */,
+				031DEEE316FC268F00301998 /* sqlite */,
 				0351F3A316FBCF72000BDB70 /* rlb.1 */,
 			);
 			path = rlb;
@@ -214,6 +227,7 @@
 				0351F3B916FBCFB3000BDB70 /* parser.c in Sources */,
 				0351F3BB16FBCFB3000BDB70 /* test.c in Sources */,
 				0343676016FBD5B1007ACB57 /* run-tool.c in Sources */,
+				031DEEE116FC267B00301998 /* sqlite3.c in Sources */,
 				0343676216FBD6CD007ACB57 /* index.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -319,6 +333,7 @@
 				0343675616FBD493007ACB57 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0351F39716FBCF72000BDB70 /* Build configuration list for PBXProject "rlb" */ = {
 			isa = XCConfigurationList;

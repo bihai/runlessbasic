@@ -25,21 +25,37 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <stdarg.h>
 
 static long gFrees = 0;
 static void* gLastPtr = NULL;
+
+
+void fail(const char *in_msg)
+{
+    fprintf(stderr, "RunlessBASIC: fatal: %s\n", in_msg);
+    abort();
+}
+
+/*
+void fail(const char *in_msg, ...)
+{
+    va_list args;
+    void *arg;
+    int i;
+    
+    va_start(args, in_msg);
+    while ((arg = va_arg(args,))
+    va_end(args);
+    
+}*/
 
 
 void* safe_malloc(long inSize)
 {
     void *outMemory;
     outMemory = malloc(inSize);
-    if (!outMemory)
-    {
-        fprintf(stderr, "Out of memory.\n");
-        abort();
-    }
+    if (!outMemory) fail("Out of memory");
 #ifdef DEBUG
     gLastPtr = outMemory;
 #endif
@@ -51,11 +67,7 @@ void* safe_realloc(void* in_memory, long in_new_size)
 {
     void *out_memory;
     out_memory = realloc(in_memory, in_new_size);
-    if (!out_memory)
-    {
-        fprintf(stderr, "Out of memory.\n");
-        abort();
-    }
+    if (!out_memory) fail("Out of memory");
 #ifdef DEBUG
     gLastPtr = out_memory;
 #endif

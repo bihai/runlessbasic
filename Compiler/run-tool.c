@@ -31,7 +31,11 @@
 
 int main(int argc, const char * argv[])
 {
-    printf("RunlessBASIC Tool\n");
+    Index *index;
+    
+    index = index_open("/Users/josh/Desktop/test.index");
+    
+    index_close(index);
     
     return 0;
 }
