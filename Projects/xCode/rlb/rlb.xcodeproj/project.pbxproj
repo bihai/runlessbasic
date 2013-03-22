@@ -14,6 +14,8 @@
 		0343675D16FBD4CB007ACB57 /* parser.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B016FBCFB3000BDB70 /* parser.c */; };
 		0343675E16FBD4CE007ACB57 /* test.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B416FBCFB3000BDB70 /* test.c */; };
 		0343676016FBD5B1007ACB57 /* run-tool.c in Sources */ = {isa = PBXBuildFile; fileRef = 0343675F16FBD5B1007ACB57 /* run-tool.c */; };
+		0343676216FBD6CD007ACB57 /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = 0343676116FBD6CD007ACB57 /* index.c */; };
+		0343676316FBD6CD007ACB57 /* index.c in Sources */ = {isa = PBXBuildFile; fileRef = 0343676116FBD6CD007ACB57 /* index.c */; };
 		0351F3A416FBCF72000BDB70 /* rlb.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0351F3A316FBCF72000BDB70 /* rlb.1 */; };
 		0351F3B616FBCFB3000BDB70 /* ast.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AA16FBCFB3000BDB70 /* ast.c */; };
 		0351F3B716FBCFB3000BDB70 /* lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AC16FBCFB3000BDB70 /* lexer.c */; };
@@ -47,6 +49,8 @@
 /* Begin PBXFileReference section */
 		0343674E16FBD493007ACB57 /* rlbtests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rlbtests; sourceTree = BUILT_PRODUCTS_DIR; };
 		0343675F16FBD5B1007ACB57 /* run-tool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "run-tool.c"; path = "../../../../Compiler/run-tool.c"; sourceTree = "<group>"; };
+		0343676116FBD6CD007ACB57 /* index.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = index.c; path = ../../../../Compiler/index.c; sourceTree = "<group>"; };
+		0343676416FBD6DA007ACB57 /* index.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = index.h; path = ../../../../Compiler/index.h; sourceTree = "<group>"; };
 		0351F39D16FBCF72000BDB70 /* rlb */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rlb; sourceTree = BUILT_PRODUCTS_DIR; };
 		0351F3A316FBCF72000BDB70 /* rlb.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = rlb.1; sourceTree = "<group>"; };
 		0351F3AA16FBCFB3000BDB70 /* ast.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ast.c; path = ../../../../Compiler/ast.c; sourceTree = "<group>"; };
@@ -113,6 +117,8 @@
 				0351F3B116FBCFB3000BDB70 /* parser.h */,
 				0351F3B416FBCFB3000BDB70 /* test.c */,
 				0351F3B516FBCFB3000BDB70 /* test.h */,
+				0343676416FBD6DA007ACB57 /* index.h */,
+				0343676116FBD6CD007ACB57 /* index.c */,
 				0351F3B316FBCFB3000BDB70 /* sqlite */,
 				0351F3A316FBCF72000BDB70 /* rlb.1 */,
 			);
@@ -194,6 +200,7 @@
 				0343675E16FBD4CE007ACB57 /* test.c in Sources */,
 				0343675B16FBD4C7007ACB57 /* lexer.c in Sources */,
 				0343675A16FBD4BB007ACB57 /* ast.c in Sources */,
+				0343676316FBD6CD007ACB57 /* index.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,6 +214,7 @@
 				0351F3B916FBCFB3000BDB70 /* parser.c in Sources */,
 				0351F3BB16FBCFB3000BDB70 /* test.c in Sources */,
 				0343676016FBD5B1007ACB57 /* run-tool.c in Sources */,
+				0343676216FBD6CD007ACB57 /* index.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
