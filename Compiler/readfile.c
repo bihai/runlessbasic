@@ -3,8 +3,8 @@
  * RunlessBASIC
  * Copyright 2013 Joshua Hawcroft <dev@joshhawcroft.com>
  *
- * parser.h
- * (see C source file for details)
+ * readfile.c
+ * Read an entire file into memory (up to a maximum file size.)
  *
  ***************************************************************************************************
  *
@@ -23,30 +23,51 @@
  *
  **************************************************************************************************/
 
-#include "ast.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #include "memory.h"
 
-#ifndef _PARSER_H
-#define _PARSER_H
+#define MAX_SOURCE_FILE_SIZE        250 * 1024 * 1024
 
 
-typedef struct Parser Parser;
+char* readfile(const char *in_pathname)
+{
+    FILE    *fh;
+    long    size;
+    char    *buffer;
+    size_t  bytes;
+    
+    /* attempt to open file */
+    fh = fopen(in_pathname, "rb");
+    if (!fh) fail("Can't open file for reading");
+    
+    /* determine file size */
+    fseek(fh, 0, SEEK_END);
+    size = ftell(fh);
+    rewind(fh);
+    
+    /* check file size */
+    if (size > MAX_SOURCE_FILE_SIZE)
+        fail("Out of memory reading file");
+    
+    /* allocate memory to contain the entire file */
+    buffer = safe_malloc(size + 1);
+    
+    /* read the file into the buffer */
+    bytes = fread(buffer, 1, size, fh);
+    if (size != bytes)
+        fail("Couldn't read whole file");
+    
+    /* close file */
+    fclose(fh);
+    
+    /* return the result */
+    buffer[size] = 0;
+    return buffer;
+}
 
-Parser* parser_create(void);
-
-Boolean parser_parse(Parser *in_parser, char *in_source);
-
-const char* parser_error_message(Parser *in_parser);
-long parser_error_offset(Parser *in_parser);
-
-AstNode* parser_ast(Parser *in_parser);
 
 
-#ifdef DEBUG
 
-void parser_run_tests();
-
-#endif
-
-
-#endif

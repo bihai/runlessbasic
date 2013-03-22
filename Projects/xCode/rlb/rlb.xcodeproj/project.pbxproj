@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		031DEEE116FC267B00301998 /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = 031DEEE016FC267B00301998 /* sqlite3.c */; };
+		031DEEE716FC2FD700301998 /* readfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 031DEEE616FC2FD700301998 /* readfile.c */; };
+		031DEEE816FC2FD700301998 /* readfile.c in Sources */ = {isa = PBXBuildFile; fileRef = 031DEEE616FC2FD700301998 /* readfile.c */; };
 		0343675916FBD4B1007ACB57 /* run-tests.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3B216FBCFB3000BDB70 /* run-tests.c */; };
 		0343675A16FBD4BB007ACB57 /* ast.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AA16FBCFB3000BDB70 /* ast.c */; };
 		0343675B16FBD4C7007ACB57 /* lexer.c in Sources */ = {isa = PBXBuildFile; fileRef = 0351F3AC16FBCFB3000BDB70 /* lexer.c */; };
@@ -51,6 +53,8 @@
 		031DEEE016FC267B00301998 /* sqlite3.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../../../../Compiler/sqlite/sqlite3.c; sourceTree = "<group>"; };
 		031DEEE216FC268300301998 /* sqlite3.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = sqlite3.h; path = ../../../../Compiler/sqlite/sqlite3.h; sourceTree = "<group>"; };
 		031DEEE416FC2A3500301998 /* rlb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = rlb.h; path = ../../../../Compiler/rlb.h; sourceTree = "<group>"; };
+		031DEEE516FC2FC400301998 /* readfile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = readfile.h; path = ../../../../Compiler/readfile.h; sourceTree = "<group>"; };
+		031DEEE616FC2FD700301998 /* readfile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = readfile.c; path = ../../../../Compiler/readfile.c; sourceTree = "<group>"; };
 		0343674E16FBD493007ACB57 /* rlbtests */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = rlbtests; sourceTree = BUILT_PRODUCTS_DIR; };
 		0343675F16FBD5B1007ACB57 /* run-tool.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = "run-tool.c"; path = "../../../../Compiler/run-tool.c"; sourceTree = "<group>"; };
 		0343676116FBD6CD007ACB57 /* index.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = index.c; path = ../../../../Compiler/index.c; sourceTree = "<group>"; };
@@ -134,6 +138,8 @@
 				0343676116FBD6CD007ACB57 /* index.c */,
 				031DEEE316FC268F00301998 /* sqlite */,
 				0351F3A316FBCF72000BDB70 /* rlb.1 */,
+				031DEEE516FC2FC400301998 /* readfile.h */,
+				031DEEE616FC2FD700301998 /* readfile.c */,
 			);
 			path = rlb;
 			sourceTree = "<group>";
@@ -214,6 +220,7 @@
 				0343675B16FBD4C7007ACB57 /* lexer.c in Sources */,
 				0343675A16FBD4BB007ACB57 /* ast.c in Sources */,
 				0343676316FBD6CD007ACB57 /* index.c in Sources */,
+				031DEEE816FC2FD700301998 /* readfile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,6 +236,7 @@
 				0343676016FBD5B1007ACB57 /* run-tool.c in Sources */,
 				031DEEE116FC267B00301998 /* sqlite3.c in Sources */,
 				0343676216FBD6CD007ACB57 /* index.c in Sources */,
+				031DEEE716FC2FD700301998 /* readfile.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

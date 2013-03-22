@@ -570,9 +570,8 @@ static AstNode* _parse_return(Parser *in_parser)
  -  a compiler #pragma
  -  control keywords: exit, continue
  -  variable declaration (Dim, Redim)
- -  return
+ -  return ...
  */
-/* TODO: Need to implement parsing of Return statements */
 static AstNode* _parse_statement(Parser *in_parser)
 {
     Token token;
@@ -1775,6 +1774,7 @@ static void _reset(Parser *in_parser)
 {
     in_parser->error_message = NULL;
     if (in_parser->ast) ast_dispose(in_parser->ast);
+    in_parser->init = _parse_file;
 }
 
 
@@ -1808,6 +1808,24 @@ Parser* parser_create(void)
     parser->init = &_parse_statement;
     
     return parser;
+}
+
+
+const char* parser_error_message(Parser *in_parser)
+{
+    return in_parser->error_message;
+}
+
+
+long parser_error_offset(Parser *in_parser)
+{
+    return in_parser->error_offset;
+}
+
+
+AstNode* parser_ast(Parser *in_parser)
+{
+    return in_parser->ast;
 }
 
 

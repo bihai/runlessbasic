@@ -3,7 +3,7 @@
  * RunlessBASIC
  * Copyright 2013 Joshua Hawcroft <dev@joshhawcroft.com>
  *
- * parser.h
+ * readfile.h
  * (see C source file for details)
  *
  ***************************************************************************************************
@@ -23,30 +23,11 @@
  *
  **************************************************************************************************/
 
-#include "ast.h"
-#include "memory.h"
-
-#ifndef _PARSER_H
-#define _PARSER_H
+#ifndef rlb_readfile_h
+#define rlb_readfile_h
 
 
-typedef struct Parser Parser;
-
-Parser* parser_create(void);
-
-Boolean parser_parse(Parser *in_parser, char *in_source);
-
-const char* parser_error_message(Parser *in_parser);
-long parser_error_offset(Parser *in_parser);
-
-AstNode* parser_ast(Parser *in_parser);
-
-
-#ifdef DEBUG
-
-void parser_run_tests();
-
-#endif
+char* readfile(const char *in_pathname);
 
 
 #endif

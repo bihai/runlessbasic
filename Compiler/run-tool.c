@@ -27,13 +27,43 @@
 
 #include "parser.h"
 #include "index.h"
+#include "readfile.h"
+#include "memory.h"
 
 
 int main(int argc, const char * argv[])
 {
     Index *index;
+    Parser *parser;
+    char *source;
+    AstNode *ast;
+    
+    
+    /* for testing, currently assumed to be in indexing mode as if invoked with appropriate
+     command line arguments */
+    
+    source = readfile("/Users/josh/Desktop/test.bas");
     
     index = index_open("/Users/josh/Desktop/test.index");
+    
+    parser = parser_create();
+    
+    if (!parser_parse(parser, source))
+    {
+        fail(parser_error_message(parser)); /* need fail to support arguments like printf! */
+    }
+    
+    ast = parser_ast(parser);
+    
+    ast_walk(ast, ast_debug_walker, NULL);
+    
+    /* 
+     need to check the modification date of the file against the one we stored when it was last
+     indexed.  if same, exit this process.  otherwise, continue...
+     
+     need to walk the AST and index all the symbols into the sym table of the index 
+     */
+    
     
     index_close(index);
     
